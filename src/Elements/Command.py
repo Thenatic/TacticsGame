@@ -18,12 +18,36 @@ class Command:
         raise UnsupportedActionException
 
 
+class NullCommand:
+    def __init__(self):
+        self.name = 'None'
+
+    def __str__(self):
+        return self.name
+
+    def execute(self):
+        return None
+
+    def unexecute(self):
+        return None
+
+    def copy(self):
+        return None
+
+    def canUndo(self):
+        return None
+
+
 class PrintCommand(Command):
     def __init__(self, output):
         self.output = output
 
+    def __str__(self):
+        return self.output
+
     def execute(self):
-        print self.output
+        print str(self.output)
+        return None
 
     def unexecute(self):
         print 'Command Unworked'
@@ -37,18 +61,21 @@ class PrintCommand(Command):
 
 
 class ChangeMenuCommand(Command):
-    def __init__(self, targetMenu, prevMenu=None):
+    def __init__(self, name, targetMenu):
+        self.name = name
         self.targetMenu = targetMenu
-        self.prevMenu = prevMenu
+
+    def __str__(self):
+        return self.name
 
     def execute(self):
         return self.targetMenu
 
     def unexecute(self):
-        return self.prevMenu
+        return None
 
     def copy(self):
-        cmd = ChangeMenuCommand(self.targetMenu, self.prevMenu)
+        cmd = ChangeMenuCommand(self.targetMenu)
         return cmd
 
     def canUndo(self):

@@ -57,35 +57,54 @@ class Character(Unit):
         self.health = self.job[self.level][3]
 
         #Base Secondary Stats
-            #HP
         self.hp = ((self.health*2) + self.kine)
 
-            #FP
-        if self.animus >= self.grace:
+        if (self.animus >= self.grace):
             self.fp = (self.health + self.animus)
         else:
             self.fp = (self.health + self.grace)
 
-            #Reaction Time
         self.rt = (self.grace + self.animus)/2
 
-            #Damage Reduction
         self.dr = (self.rt + self.health)/2
 
-            #Movement
         self.mv = 5
+
+    def __str__(self):
+        string = (self.name + '\t' + self.jobName + "\n" +
+                  '\n' +
+                  'Level: ' + '\t' + str(self.level) + '\n' +
+                  'Kine: ' + '\t' + str(self.kine) + '\n' +
+                  'Grace: ' + '\t' + str(self.grace) + '\n' +
+                  'Animus: ' + '\t' + str(self.animus) + '\n' +
+                  'Health: ' + '\t' + str(self.health) + '\n' +
+                  '\n'
+                  'HP: ' + '\t' + str(self.hp) + '\n' +
+                  'FP: ' + '\t' + str(self.fp) + '\n' +
+                  'Damage Reduction: ' + '\t' + str(self.dr) + '\n' +
+                  'Reaction Time: ' + '\t' + str(self.rt) + '\n' +
+                  'Movement Speed: ' + '\t' + str(self.mv) + '\n' +
+                  '\n')
+
+        if (self.spirit == 'None'):
+            string = string + 'Spirit: ' + '\t' + 'None'
+        else:
+            string = string + 'Spirit: ' + '\t' + self.spirit
+
+        return string
 
     def setSpirit(self, spirit=None):
         '''
         Links a spirit unit with this unit
         '''
-        if spirit == None:
+        if spirit is None:
             self.spirit = 'None'
             self.spiritName = 'None'
 
         else:
             self.spirit = spirit
             self.spiritName = spirit.name
+
 
 
 class Spirit(Unit):
@@ -111,3 +130,17 @@ class Spirit(Unit):
         self.grace = self.job[self.level][1]
         self.animus = self.job[self.level][2]
         self.health = self.job[self.level][3]
+
+    def __str__(self):
+        # Steve    Apostate
+        # Level:   1
+        #
+        string = (self.name + '\t' + self.jobName + "\n" +
+                  '\n' +
+                  'Level: ' + '\t' + str(self.level) + '\n' +
+                  'Kine: ' + '\t' + str(self.kine) + '\n' +
+                  'Grace: ' + '\t' + str(self.grace) + '\n' +
+                  'Animus: ' + '\t' + str(self.animus) + '\n' +
+                  'Health: ' + '\t' + str(self.health) + '\n')
+
+        return string
