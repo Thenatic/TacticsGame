@@ -4,7 +4,6 @@ Currently used for testing menu structure.
 """
 
 
-
 import os
 # import os, pygame, sys
 # from pygame.locals import*
@@ -34,7 +33,7 @@ def ButtonMenuBuilder(items, menu, cmdType=''):
         if(cmdType == 'menu'):
             c = ChangeMenuCommand(unit, items[i])
         else:
-            c = PrintCommand(UnitMenu(unit, items[i]))
+            c = PrintCommand(items[i].data())
         b = Button(unit, c)
         units.append(b)
     menu.setMenuItems(units)
@@ -53,7 +52,7 @@ currMenu = mainMenu
 
 while(True):
     print '\n'
-    print currMenu
+    print currMenu.data()
     user = raw_input("UP[A], DOWN[S], SELECT[Z], BACK[X], EXIT[Q]\n")
     user = str(user).lower()
 

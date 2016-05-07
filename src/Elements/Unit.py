@@ -8,9 +8,9 @@ Allows for many different unit sub-classes, including Character and Spirit.
 #JobName = [ [lvl1 kine, lvl1 grace, lvl1 animus, lvl1 health],
 #            [lvl2 kine, lvl2 grace, lvl2 animus, lvl2 health] ]
 
-AP = [[5,5,5,5], [6,6,6,6]]
-MT = [[5,5,5,5], [6,6,6,6]]
-NM = [[5,5,5,5], [6,6,6,6]]
+AP = [[5,5,7,7], [6,6,8,8]]
+MT = [[8,5,5,8], [9,6,6,9]]
+NM = [[5,7,7,5], [6,8,8,6]]
 TG = [[5,5,5,5], [6,6,6,6]]
 
 LF = [[0,1,0,1], [0,2,0,1]]
@@ -28,6 +28,9 @@ jobArray = [AP, MT, NM, TG]
 class Unit:
     def __str__(self):
         return ''
+
+    def __repr__(self):
+        return self.__str__()
 
 
 class Character(Unit):
@@ -71,10 +74,13 @@ class Character(Unit):
         self.mv = 5
 
     def __str__(self):
+        return self.name
+
+    def data(self):
         string = (self.name + '\t' + self.jobName + "\n" +
                   '\n' +
                   'Level: ' + '\t' + str(self.level) + '\n' +
-                  'Kine: ' + '\t' + str(self.kine) + '\n' +
+                  'Kinesthesis: ' + '\t' + str(self.kine) + '\n' +
                   'Grace: ' + '\t' + str(self.grace) + '\n' +
                   'Animus: ' + '\t' + str(self.animus) + '\n' +
                   'Health: ' + '\t' + str(self.health) + '\n' +
@@ -106,6 +112,19 @@ class Character(Unit):
             self.spiritName = spirit.name
 
 
+class BattleCharacter(Character):
+    def __init__(self, character):
+        Character.__init__(self, character.name, character.jobName, character.level)
+        self.currHp = self.hp
+        self.currFp = self.fp
+        self.initiative = self.rt
+        self.location = (0, 0)
+
+    def setLocation(self, location):
+        self.location = location
+
+    def getActions(self):
+        self.actions = ['Move', 'Melee']
 
 class Spirit(Unit):
     '''
@@ -132,15 +151,17 @@ class Spirit(Unit):
         self.health = self.job[self.level][3]
 
     def __str__(self):
-        # Steve    Apostate
-        # Level:   1
-        #
+        return self.name
+
+    def data(self):
         string = (self.name + '\t' + self.jobName + "\n" +
                   '\n' +
                   'Level: ' + '\t' + str(self.level) + '\n' +
-                  'Kine: ' + '\t' + str(self.kine) + '\n' +
+                  'Kinesthesis: ' + '\t' + str(self.kine) + '\n' +
                   'Grace: ' + '\t' + str(self.grace) + '\n' +
                   'Animus: ' + '\t' + str(self.animus) + '\n' +
                   'Health: ' + '\t' + str(self.health) + '\n')
 
         return string
+
+#class Mook(Unit):

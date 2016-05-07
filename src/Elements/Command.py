@@ -82,6 +82,22 @@ class ChangeMenuCommand(Command):
         return True
 
 
+# class Melee(Command):
+#     def __init__(self, attacker, defender):
+#         self.attacker = attacker
+#         self.defender = defender
+#
+#     def execute(self):
+#         dmg = self.attacker.kine - self.defender.df
+#         self.defender.currHp -= dmg
+#
+# class MoveCommand(Command):
+#     def __init__(self, mover):
+#         self.range = mover.mv
+#
+#     #def execute(self):
+
+
 
 class CommandHistory:
 

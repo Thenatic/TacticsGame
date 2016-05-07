@@ -41,8 +41,17 @@ class newFile():
         spirit2 = Spirit('Fred', 'Guardian of Ayn', 1)
         spirit3 = Spirit('Nimrod', 'Swordsman of the West', 1)
         self.spirits = [spirit1, spirit2, spirit3]
-        
-        
+
+class tempFile():
+    def __init__(self):
+        self.characters = []
+
+        # Add initial units
+        bad1 = Character('Jim', 'Thug', 1)
+        bad2 = Character('Joe', 'Thug', 1)
+        self.characters = [bad1, bad2]
+
+
 # print os.getcwd()
 # os.chdir(r'G:\Dropbox\LiClipseWorkspace\LAON')
 # print os.getcwd()

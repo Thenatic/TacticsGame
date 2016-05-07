@@ -47,6 +47,9 @@ class ButtonMenu(Menu):
             self.length = 0
 
     def __str__(self):
+        return self.name
+
+    def data(self):
         string = self.name
         for i in range(0, self.length):
             # 1.) New Game
