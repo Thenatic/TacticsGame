@@ -1,0 +1,19 @@
+####################
+Tactics Game
+v 0.01
+####################
+
+INTRO
+ This little side project is a way for me to explore some of the techniques covered in my college classes.
+
+ The game itself has mechanics similar to Fire Embelem and Final Fantasy Tactics. It's intended to be turn-based
+ and character-driven. Everything else is still up in the air.
+
+TO-DO
+ * Get combat commands working
+ * Implement spirit binding
+ * Implement unit movement and location
+ * Create the start menu
+ * Maybe use a finite state machine?
+ * Develop simple A.I. (find enemy/attack enemy)
+ * Get save/load running

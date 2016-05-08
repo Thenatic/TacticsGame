@@ -32,14 +32,18 @@ battlefield = map_parse(map_file)
 for i in range(0, len(game.characters)):
     unit = game.characters[i]
     unit = BattleCharacter(unit)
+    unit.setLocation((i, 0))
+    battlefield.addObject(unit, unit.location)
     rosterUnit = [unit, unit.initiative]
     roster.append(rosterUnit)
 
 
-# Pull unfriendly units from map
+# Pull unfriendly units from encounter
 for i in range(0, len(bads.characters)):
     unit = bads.characters[i]
     unit = BattleCharacter(unit)
+    unit.setLocation((i, 4))
+    battlefield.addObject(unit, unit.location)
     rosterUnit = [unit, unit.initiative]
     roster.append(rosterUnit)
 
@@ -81,7 +85,10 @@ currMenu = actionMenu
 while(True):
     print '\n'
     print battlefield.data()
+    print battlefield.objectData()
+    print '\n'
     print roster
+    print '\n'
     top = roster.peek()[0]
     ButtonMenuBuilder(top.actions, actionMenu)
     print str(top)

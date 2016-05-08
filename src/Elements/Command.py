@@ -89,6 +89,8 @@ class CombatCommand(Command):
     def __str__(self):
         return self.cmdName
 
+    def execute(self, user=None, target=None, range=None):
+        return None
 
 
 
