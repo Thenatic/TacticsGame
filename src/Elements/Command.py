@@ -82,6 +82,16 @@ class ChangeMenuCommand(Command):
         return True
 
 
+class CombatCommand(Command):
+    def __init__(self, cmdName):
+        self.cmdName = cmdName
+
+    def __str__(self):
+        return self.cmdName
+
+
+
+
 # class Melee(Command):
 #     def __init__(self, attacker, defender):
 #         self.attacker = attacker

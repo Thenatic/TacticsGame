@@ -119,12 +119,11 @@ class BattleCharacter(Character):
         self.currFp = self.fp
         self.initiative = self.rt
         self.location = (0, 0)
+        self.actions = ['Move', 'Melee']
 
     def setLocation(self, location):
         self.location = location
 
-    def getActions(self):
-        self.actions = ['Move', 'Melee']
 
 class Spirit(Unit):
     '''
