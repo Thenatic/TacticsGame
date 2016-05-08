@@ -74,7 +74,7 @@ class Character(Unit):
         self.mv = 5
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     def data(self):
         string = (self.name + '\t' + self.jobName + "\n" +
@@ -120,9 +120,15 @@ class BattleCharacter(Character):
         self.initiative = self.rt
         self.location = (0, 0)
         self.actions = ['Move', 'Melee']
+        self.canMove = False
+        self.canAct = False
 
     def setLocation(self, location):
         self.location = location
+
+    def newTurn(self):
+        self.canMove = True
+        self.canAct = True
 
 
 class Spirit(Unit):
@@ -150,7 +156,7 @@ class Spirit(Unit):
         self.health = self.job[self.level][3]
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
     def data(self):
         string = (self.name + '\t' + self.jobName + "\n" +

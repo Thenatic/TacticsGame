@@ -1,5 +1,5 @@
 """
-The Map class.
+The BattleMap class.
 Represents a battlefield as a data structure.
 """
 
@@ -9,8 +9,8 @@ class BattleMap:
     def __init__(self):
         self.terrain = [[]]
         self.objects = [[]]
-        self.row = 0
-        self.col = 0
+        self.cursor = [0, 0]        # [column, row]  # [x, y]
+        self.dimension = [0, 0]
         self.name = 'map'
 
     def __str__(self):
@@ -22,7 +22,7 @@ class BattleMap:
             string = string + '\n' + str(self.terrain[i]).strip('[]')
         return string
 
-    def objectData(self):
+    def onTileData(self):
         string = ''
         for i in range(0, len(self.objects)):
             string = string + '\n' + str(self.objects[i]).strip('[]')
@@ -30,33 +30,45 @@ class BattleMap:
 
     def addTile(self, c):
         if(c in 'g'):
-            tile = GrassTile((self.col, self.row))
+            tile = GrassTile(self.cursor)
         elif(c in 'h'):
-            tile = HillTile((self.col, self.row))
+            tile = HillTile(self.cursor)
         elif (c in 'w'):
-            tile = WaterTile((self.col, self.row))
+            tile = WaterTile(self.cursor)
         else:
             raise BadMapFormatException
-        self.terrain[self.col].insert(self.row, tile)
-        self.objects[self.col].insert(self.row, 'empty')
-        self.col += 1
+        self.terrain[self.cursor[1]].insert(self.cursor[0], tile)
+        self.objects[self.cursor[1]].insert(self.cursor[0], 'empty')
+        self.cursor[0] += 1
+        self.dimension = copy.copy(self.cursor)
 
-    def addObject(self, object, location):
-        col = location[1]
-        row = location[0]
-        self.objects[col][row] = object
+    def addObject(self, onTile, location):
+        col = copy.copy(location[0])
+        row = copy.copy(location[1])
+        self.objects[row][col] = onTile
 
     def nextRow(self):
-        self.row += 1
-        self.col = 0
+        self.cursor[1] += 1     # Jump down a row
+        self.cursor[0] = 0      # Set column back to 0
 
     def setMap(self, nestedList):
         self.terrain = nestedList
         self.objects = copy.deepcopy(nestedList)
 
+    def moveObject(self, onTile):
+        for i in range(0, self.dimension[1]):
+            for j in range(0, self.dimension[0]):
+                if(onTile == self.objects[i][j]):
+                    self.objects[i][j] = 'empty'
+
+        newLocation = onTile.location
+        newCol = newLocation[0]
+        newRow = newLocation[1]
+        self.objects[newCol][newRow] = onTile
+
 class Tile:
     def __init__(self, location):
-        self.location = location
+        self.location = copy.copy(location)
 
     def __str__(self):
         return 'Tile'

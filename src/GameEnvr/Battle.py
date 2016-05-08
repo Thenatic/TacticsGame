@@ -65,6 +65,16 @@ def ButtonMenuBuilder(items, menu, cmdType=''):
         b = Button(action, c)
         actions.append(b)
     menu.setMenuItems(actions)
+
+#A temporary way to translate user input into a tile object
+def ParseTarget(string):
+    string = string.strip('()')
+    string = string.replace(',', ' ')
+    print string
+    row = int(string[0])
+    col = int(string[2])
+    return battlefield.terrain[col][row]
+
 #
 #
 # top = roster.peek()
@@ -85,7 +95,7 @@ currMenu = actionMenu
 while(True):
     print '\n'
     print battlefield.data()
-    print battlefield.objectData()
+    print battlefield.onTileData()
     print '\n'
     print roster
     print '\n'
@@ -103,9 +113,13 @@ while(True):
         currMenu.down()
 
     elif(user == 'z'):
-        newMenu = currMenu.select().execute()
-        if(newMenu is not None):
-            currMenu = newMenu
+        cmdHold = currMenu.select().execute(user=top, battlemap=battlefield)
+        target = raw_input("Target Location\n")
+        if('x' in target):
+            break
+        else:
+            target = ParseTarget(target)
+            cmdHold.sendTarget(target)
 
     elif(user == 'x'):
         newMenu = currMenu.back().execute()

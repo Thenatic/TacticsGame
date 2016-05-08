@@ -3,6 +3,8 @@ The Command class [abstract].
 Allows for the creation of many different Command sub-classes.
 """
 
+import math
+import copy
 
 class Command:
     def execute(self):
@@ -89,25 +91,52 @@ class CombatCommand(Command):
     def __str__(self):
         return self.cmdName
 
-    def execute(self, user=None, target=None, range=None):
-        return None
+    def execute(self, user=None, target=None, distance=None, battlemap=None):
+        if('move' in self.cmdName.lower()):
+            cmd = MoveCommand()
+            return cmd.execute(user, target, distance, battlemap)
+        # elif('melee' in self.cmdName):
+        #     MeleeCommand.execute()
+        else:
+            raise UnsupportedActionException
 
+class MoveCommand(CombatCommand):
+    def __init__(self):
+        CombatCommand.__init__(self, 'move')
 
+    def execute(self, user=None, target=None, distance=None, battlemap=None):
+        self.user = user
+        self.battlemap = battlemap
+        return self
 
-# class Melee(Command):
-#     def __init__(self, attacker, defender):
-#         self.attacker = attacker
-#         self.defender = defender
-#
-#     def execute(self):
-#         dmg = self.attacker.kine - self.defender.df
-#         self.defender.currHp -= dmg
-#
-# class MoveCommand(Command):
-#     def __init__(self, mover):
-#         self.range = mover.mv
-#
-#     #def execute(self):
+    def sendTarget(self, target):
+        user = self.user
+        distance = user.mv
+        userX = user.location[0]
+        userY = user.location[1]
+        targetX = target.location[0]
+        targetY = target.location[1]
+
+        targetDistance = int(math.hypot(targetX - userX, targetY - userY))
+
+        if (targetDistance <= distance):
+            self.oldLocation = copy.copy(user.location)
+            user.location = copy.copy(target.location)
+            user.canMove = False
+            self.battlemap.moveObject(user)
+
+        else:
+            return None
+
+class MeleeCommand(Command):
+    def __init__(self, attacker, defender):
+        self.attacker = attacker
+        self.defender = defender
+
+    def execute(self):
+        dmg = self.attacker.kine - self.defender.df
+        self.defender.currHp -= dmg
+
 
 
 
@@ -143,3 +172,4 @@ class CommandHistory:
 class UnsupportedActionException(Exception):
     def __str__(self):
         return 'UnsupportedActionException'
+
