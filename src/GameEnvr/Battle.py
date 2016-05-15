@@ -13,7 +13,7 @@ os.chdir('/home/roy/PycharmProjects/TacticsGame/')
 
 from src.Elements.Menu import*
 from src.Elements.Button import*
-from src.Elements.Command import*
+from src.Elements.CombatCommand import*
 from src.Elements.Roster import*
 from src.Utility.save_load import*
 from src.Utility.map_parse import map_parse
@@ -50,14 +50,22 @@ for i in range(0, len(bads.characters)):
 # Sort roster by turn order
 roster.sort()
 
-# Build menus
+# Build empty menus
 actionMenu = ButtonMenu('Action Menu')
 utilityMenu = ButtonMenu('Utility Menu')
 
-    # Build Main Menu
 
+# Define useful functions
 
 def ButtonMenuBuilder(items, menu, cmdType=''):
+    """
+    Builds a button menu out of a list
+
+    :param items: Things that become buttons.
+    :param menu:  Menu to put buttons in.
+    :param cmdType:
+    :return:
+    """
     actions = []
     for i in range(0, len(items)):
         action = items[i]
@@ -68,6 +76,12 @@ def ButtonMenuBuilder(items, menu, cmdType=''):
 
 #A temporary way to translate user input into a tile object
 def ParseTarget(string):
+    """
+    Determines the target of an action by parsing a string.
+
+    :param string:
+    :return:
+    """
     string = string.strip('()')
     string = string.replace(',', ' ')
     print string
@@ -93,16 +107,28 @@ def ParseTarget(string):
 currMenu = actionMenu
 
 while(True):
+    top = roster.peek()[0]
+
+    # Check if unit turn is done, and rotate roster if so.
+    if(top.canMove is False and top.canAct is False):
+        top.endTurn()
+        roster.timePassed()
+        top = roster.peek()[0]
+
+    # Print battlefield data.
     print '\n'
     print battlefield.data()
     print battlefield.onTileData()
     print '\n'
     print roster
     print '\n'
-    top = roster.peek()[0]
+
+    # Setup the action menu.
     ButtonMenuBuilder(top.actions, actionMenu)
     print str(top)
     print actionMenu.data()
+
+    # Act on user input.
     user = raw_input("UP[A], DOWN[S], SELECT[Z], BACK[X], EXIT[Q]\n")
     user = str(user).lower()
 
@@ -114,12 +140,13 @@ while(True):
 
     elif(user == 'z'):
         cmdHold = currMenu.select().execute(user=top, battlemap=battlefield)
-        target = raw_input("Target Location\n")
-        if('x' in target):
-            break
-        else:
-            target = ParseTarget(target)
-            cmdHold.sendTarget(target)
+        if('end' not in cmdHold.cmdName):
+            target = raw_input("Target Location\n")
+            if('x' in target):
+                break
+            else:
+                target = ParseTarget(target)
+                cmdHold.sendTarget(target)
 
     elif(user == 'x'):
         newMenu = currMenu.back().execute()

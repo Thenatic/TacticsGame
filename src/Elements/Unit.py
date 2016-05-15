@@ -3,6 +3,9 @@ The Unit class [abstract].
 Allows for many different unit sub-classes, including Character and Spirit.
 """
 
+
+import copy
+
 #Job Data
 #
 #JobName = [ [lvl1 kine, lvl1 grace, lvl1 animus, lvl1 health],
@@ -24,6 +27,7 @@ Titles = {'Lord of the Fishes':LF, 'Guardian of Ayn':GA, 'Swordsman of the West'
 
 #Job Array
 jobArray = [AP, MT, NM, TG]
+
 
 class Unit:
     def __str__(self):
@@ -115,20 +119,33 @@ class Character(Unit):
 class BattleCharacter(Character):
     def __init__(self, character):
         Character.__init__(self, character.name, character.jobName, character.level)
-        self.currHp = self.hp
-        self.currFp = self.fp
-        self.initiative = self.rt
+        self.currHp = copy.copy(self.hp)
+        self.currFp = copy.copy(self.fp)
+        self.initiative = copy.copy(self.rt)
         self.location = (0, 0)
-        self.actions = ['Move', 'Melee']
-        self.canMove = False
-        self.canAct = False
+        self.actions = ['Move', 'Melee', 'End']
+        self.canMove = True
+        self.canAct = True
 
     def setLocation(self, location):
         self.location = location
 
-    def newTurn(self):
+    def resetTurn(self):
         self.canMove = True
         self.canAct = True
+
+    def moved(self):
+        self.canMove = False
+
+    def acted(self):
+        self.canAct = False
+
+    def endTurn(self):
+        self.initiative = 0
+        self.resetTurn()
+
+    def gainInitiative(self):
+        self.initiative += 1
 
 
 class Spirit(Unit):

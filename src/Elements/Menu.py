@@ -1,5 +1,5 @@
 """
-The Menu class [Abstract].
+The Menu class.
 A data structure that navigates around an array of buttons objects.
 """
 
@@ -42,7 +42,7 @@ class ButtonMenu(Menu):
         self.cursorIndex = 0
 
         if (menuItems is not None):
-            self.length = len(menuItems)
+            self.length = len(menuItems)-1
         else:
             self.length = 0
 
@@ -51,9 +51,9 @@ class ButtonMenu(Menu):
 
     def data(self):
         string = self.name
-        for i in range(0, self.length):
+        for i in range(0, len(self.menuItems)):
             # 1.) New Game
-            string = string + '\n' + str(i) + '.) ' + str(self.menuItems[i])
+            string = string + '\n' + str(i+1) + '.) ' + str(self.menuItems[i])
             if (i == self.cursorIndex):
                 string = string + ' *CURSOR*'
         return string
@@ -65,7 +65,7 @@ class ButtonMenu(Menu):
         self.menuItems = menuItems
 
         if (menuItems is not None):
-            self.length = len(menuItems)
+            self.length = len(menuItems) - 1
         else:
             self.length = 0
 
