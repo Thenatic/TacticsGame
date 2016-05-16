@@ -87,7 +87,10 @@ def ParseTarget(string):
     print string
     row = int(string[0])
     col = int(string[2])
-    return battlefield.terrain[col][row]
+    if(row <= battlefield.dimension[0] and col <= battlefield.dimension[1]):
+        return battlefield.terrain[row][col]
+    else:
+        return None
 
 #
 #
@@ -140,13 +143,14 @@ while(True):
 
     elif(user == 'z'):
         cmdHold = currMenu.select().execute(user=top, battlemap=battlefield)
-        if('end' not in cmdHold.cmdName):
+        if(cmdHold is not None and 'end' not in cmdHold.cmdName):
             target = raw_input("Target Location\n")
             if('x' in target):
                 break
             else:
                 target = ParseTarget(target)
-                cmdHold.sendTarget(target)
+                if(target is not None):
+                    result = cmdHold.sendTarget(target)
 
     elif(user == 'x'):
         newMenu = currMenu.back().execute()

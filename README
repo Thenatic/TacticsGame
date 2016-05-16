@@ -10,9 +10,9 @@ INTRO
  and character-driven. Everything else is still up in the air.
 
 TO-DO
- * Get combat commands working
+ * Get combat commands to work better
  * Implement spirit binding
- * Implement unit movement and location
+ * Improve unit movement and location
  * Create the start menu
  * Maybe use a finite state machine?
  * Develop simple A.I. (find enemy/attack enemy)

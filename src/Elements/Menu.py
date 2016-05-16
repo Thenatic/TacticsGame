@@ -6,6 +6,9 @@ A data structure that navigates around an array of buttons objects.
 from src.Elements.Command import*
 
 class Menu:
+    """
+    Generic Menu class, used mainly as a base for other menu classes.
+    """
     def __init__(self, name, prevMenu=None):
         self.name = name                #Menu Name
         self.prevMenu = prevMenu        #Previous Menu
@@ -35,6 +38,11 @@ class Menu:
 
 
 class ButtonMenu(Menu):
+    """
+    The ButtonMenu class.
+    A menu based around buttons, each of which contains a Command object.
+    The menu allows users to navigate and access the buttons and their commands.
+    """
     def __init__(self, name, menuItems=None, prevMenu=None):
         Menu.__init__(self, name)
         self.menuItems = menuItems  # Button Array
@@ -83,6 +91,10 @@ class ButtonMenu(Menu):
         return cmd
 
 class UnitMenu(Menu):
+    """
+    The UnitMenu class.
+    In-progress.
+    """
     def __init__(self, name, unit):
         Menu.__init__(self, name)
         self.unit = unit

@@ -66,6 +66,14 @@ class BattleMap:
         newRow = newLocation[1]
         self.objects[newCol][newRow] = onTile
 
+    def isOccupied(self, locationTile):
+        row = locationTile.location[0]
+        col = locationTile.location[1]
+        if('empty' == self.objects[row][col]):
+            return False
+        else:
+            return True
+
 class Tile:
     def __init__(self, location):
         self.location = copy.copy(location)
