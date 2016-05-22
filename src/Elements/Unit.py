@@ -5,6 +5,7 @@ Allows for many different unit sub-classes, including Character and Spirit.
 
 
 import copy
+import math
 
 #Job Data
 #
@@ -67,13 +68,13 @@ class Character(Unit):
         self.hp = ((self.health*2) + self.kine)
 
         if (self.animus >= self.grace):
-            self.fp = (self.health + self.animus)
+            self.sp = (self.health + self.animus)
         else:
-            self.fp = (self.health + self.grace)
+            self.sp = (self.health + self.grace)
 
-        self.rt = (self.grace + self.animus)/2
+        self.rt = math.ceil((self.grace + self.animus)/2)
 
-        self.dr = (self.rt + self.health)/2
+        self.dr = math.ceil((self.kine + self.health)/2)
 
         self.mv = 5
 
@@ -89,8 +90,8 @@ class Character(Unit):
                   'Animus: ' + '\t' + str(self.animus) + '\n' +
                   'Health: ' + '\t' + str(self.health) + '\n' +
                   '\n'
-                  'HP: ' + '\t' + str(self.hp) + '\n' +
-                  'FP: ' + '\t' + str(self.fp) + '\n' +
+                  'Hit Points: ' + '\t' + str(self.hp) + '\n' +
+                  'Stamina Points: ' + '\t' + str(self.sp) + '\n' +
                   'Damage Reduction: ' + '\t' + str(self.dr) + '\n' +
                   'Reaction Time: ' + '\t' + str(self.rt) + '\n' +
                   'Movement Speed: ' + '\t' + str(self.mv) + '\n' +
@@ -120,7 +121,7 @@ class BattleCharacter(Character):
     def __init__(self, character):
         Character.__init__(self, character.name, character.jobName, character.level)
         self.currHp = copy.copy(self.hp)
-        self.currFp = copy.copy(self.fp)
+        self.currSp = copy.copy(self.sp)
         self.initiative = copy.copy(self.rt)
         self.location = (0, 0)
         self.actions = ['Move', 'Melee', 'End']

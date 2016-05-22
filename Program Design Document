@@ -1,0 +1,119 @@
+####################
+Program Design Document
+####################
+
+INTRO
+ This file contains a plain English description of the various mechanics used to program the game. It's a way to get
+ my thoughts out without coding them.
+
+
+#Units ##############
+
+ Unit <-- Character <-- BattleCharacter
+      ^-- Spirit
+
+
+ Above is a rough UML diagram of the Unit classes. Units are entities with stats (max HP, max FP, etc.).
+
+ There are two main types of units; Characters and Spirits. Characters are what you would expect them to be. They
+ fight in the battles and feature in the story. They have skills, motivations, and whatever else.
+
+ Spirits are closer to what other games might use equipment for. One spirit can be "equipped" by a character at a
+ given time. The character then gets boosts to their primary stats and access to that spirit's skills. Spirits
+ can be acquired through various missions and story events.
+
+ The BattleCharacter class is a decorator for the Character class. It layers on temporary attributes, like current
+ HP and turn order. An instance of BattleCharacter will be created for each Character at the beginning of a battle.
+
+
+ #Menu ##############
+
+ Menu <-- ButtonMenu <--> Button <--> Command
+      ^-- UnitMenu
+      ^-- SpiritMenu
+
+ Menu is an overreaching class that covers all types of menus.
+
+ ButtonMenu is the most common and interactive form of menu. It consists of buttons, each of which has a command.
+ The command allows some broad type of game action to occur (anything from bringing up another menu to using a skill
+ in battle).
+
+ UnitMenu and SpiritMenu are ways to display information. UnitMenu has a single button which can be used to equip
+ a Character with a Spirit.
+
+
+ #Command ###########
+
+ Command <-- CombatCommand <-- <SpecificCombatCommand>
+         ^-- <SpecificCommand>
+
+ Command follows the design pattern of the same name. It allows for a broad way of implementing game actions, like
+ changing screens or performing combat actions.
+
+ Command can be further broken down into CombatCommands, which are commands specifically for use by Characters in
+ battle. Each contains the game logic necessary to be used.
+
+
+ #BattleMap #########
+
+ BattleMap <--> Tile
+           ^--> map_parse <-- <SpecificMapFile>
+
+ The BattleMap class handles the creation and maintenance of the battlefield. It consists of two layers; terrain and
+ objects. Terrain is a 2D Array that represents the type of ground in each section of the map (grass, hill, water, etc.)
+ Objects is also a 2D Array that overlays the terrain. Instead of representing the type of ground, objects describes
+ what's on top of the ground (Characters, obstacles, etc.)
+
+ Tile is a class that represents the terrain and comprises the elements of the Terrain 2D array.
+ It's also how distance is represented in game turns. Combat actions (like movement and attacks) generally
+ have range measured in tiles.
+
+ map_parse is a function that takes in a plaintext file and translates it into a BattleMap object. A small 5x5 example
+ map is shown below. The 'g' tiles become grass tiles and the 'h' tiles become hill tiles.
+
+ Below the example terrain map is an example objects map. The Character Steve is on tile (0,0), which would put him on
+ grass. If he moved to (2,2) he'd be on a hill tile.
+
+ g g g g g
+ g g g g g
+ g g h g g
+ g g h g g
+ g g g g g
+
+ Steve, Anna, Frank, 'empty', 'empty'
+ 'empty', 'empty', 'empty', 'empty', 'empty'
+ 'empty', 'empty', 'empty', 'empty', 'empty'
+ 'empty', 'empty', 'empty', 'empty', 'empty'
+ Jim, Joe, 'empty', 'empty', 'empty'
+
+
+ #Battle ############
+
+ Battle <--> Roster
+
+ Battle is one of the main game environments. It uses most of the other classes. It works as follows:
+
+ 1.) A Battlemap object is generated from a plaintext map file.
+ 2.) Player Characters are added on to the BattleField and Roster from the game file (later by player choice).
+ 3.) Enemy Characters are added on to the BattleField and Roster from an Encounter file (not implemented yet).
+ 4.) The roster is sorted by Character Initiative.
+ 5.) Characters act when their initiative is the highest of all Characters on the roster. After their turn ends,
+     their initiative is set to zero, and all intitiatives increment by one.
+ 6.) Continue until a mission objective is reached or failed.
+
+ The meat of the game happens in step 5. This is where the player faces off against the A.I. and works to overcome
+ difficulty. Battle will eventually have a GUI user interface that resembles the one below. The left-most section
+ is the roster, where turn order is shown. The center is the Battlefield map, where terrain and units are shown on
+ a grid. The right-most section is the action menu, which shows the actions a Character can take.
+
+ ----------     -----------------------------   ---------
+ |Character|    |                           |   |Move   |
+ ----------     |                           |   ---------
+ |Character|    |                           |   |Skill  |
+ ----------     |        Battlefield        |   ---------
+ |Character|    |                           |   |Skill  |
+ ----------     |                           |   ---------
+ |Character|    |                           |   |End    |
+ ----------     |                           |   ---------
+ |Character|    |                           |
+ ----------     ----------------------------

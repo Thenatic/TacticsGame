@@ -5,9 +5,11 @@ Represents the logic of all actions that can be taken during combat.
 
 from Command import*
 
+cmdDict = {}    # Dictionary is filled in at the bottom of the file.
+
 class CombatCommand(Command):
     """
-    Abstract class for
+    Abstract class for CombatCommands. Calls constructor for appropriate command based on name.
     """
     def __init__(self, cmdName):
         self.cmdName = cmdName
@@ -16,19 +18,18 @@ class CombatCommand(Command):
         return self.cmdName
 
     def execute(self, user=None, target=None, distance=None, cmdRange=None, battlemap=None):
-        if('move' in self.cmdName.lower()):
-            cmd = MoveCommand()
-            return cmd.execute(user=user, target=target, distance=distance, battlemap=battlemap)
-        elif('end' in self.cmdName.lower()):
-            cmd = EndTurnCommand()
-            return cmd.execute(user, target, distance, battlemap)
-        else:
+        try:
+            cmd = cmdDict[self.cmdName.lower()]()
+            return cmd.execute(user=user, target=target, distance=distance, cmdRange=cmdRange, battlemap=battlemap)
+        except:
             raise UnsupportedActionException
+
 
 class MoveCommand(CombatCommand):
     def __init__(self):
         CombatCommand.__init__(self, 'move')
 
+    #Gets called when user selects "move"
     def execute(self, user=None, target=None, distance=None, cmdRange=None, battlemap=None):
         #Check if user can move
         if(user.canMove):
@@ -39,6 +40,7 @@ class MoveCommand(CombatCommand):
         else:
             return None
 
+    #Gets called after execute, when user specifies target location
     def sendTarget(self, target):
         user = self.user
         userX = user.location[0]
@@ -58,6 +60,17 @@ class MoveCommand(CombatCommand):
         else:
             return None
 
+
+class EndTurnCommand(CombatCommand):
+    def __init__(self):
+        CombatCommand.__init__(self, 'end')
+
+    def execute(self, user=None, target=None, distance=None, cmdRange=None, battlemap=None):
+        user.moved()
+        user.acted()
+        return self
+
+
 class MeleeCommand(CombatCommand):
     def __init__(self, attacker, defender):
         CombatCommand.__init__(self, 'melee')
@@ -69,15 +82,8 @@ class MeleeCommand(CombatCommand):
         self.defender.currHp -= dmg
 
 
-class EndTurnCommand(CombatCommand):
-    def __init__(self):
-        CombatCommand.__init__(self, 'end')
-
-    def execute(self, user=None, target=None, distance=None, cmdRange=None, battlemap=None):
-        user.moved()
-        user.acted()
-        return self
-
 class UnsupportedActionException(Exception):
     def __str__(self):
         return 'UnsupportedActionException'
+
+cmdDict = {'move': MoveCommand, 'end': EndTurnCommand}
