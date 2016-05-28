@@ -13,7 +13,7 @@ os.chdir('/home/roy/PycharmProjects/TacticsGame/')
 
 from src.Elements.Menu import*
 from src.Elements.Button import*
-from src.Elements.CombatCommand import*
+from src.Elements.SkillList import*
 from src.Elements.Roster import*
 from src.Utility.save_load import*
 from src.Utility.map_parse import map_parse
@@ -33,6 +33,7 @@ for i in range(0, len(game.characters)):
     unit = game.characters[i]
     unit = BattleCharacter(unit)
     unit.setLocation((i, 0))
+    unit.setAlly(True)
     battlefield.addObject(unit, unit.location)
     rosterUnit = [unit, unit.initiative]
     roster.append(rosterUnit)
@@ -43,6 +44,7 @@ for i in range(0, len(bads.characters)):
     unit = bads.characters[i]
     unit = BattleCharacter(unit)
     unit.setLocation((i, 4))
+    unit.setAlly(False)
     battlefield.addObject(unit, unit.location)
     rosterUnit = [unit, unit.initiative]
     roster.append(rosterUnit)
@@ -69,7 +71,7 @@ def ButtonMenuBuilder(items, menu, cmdType=''):
     actions = []
     for i in range(0, len(items)):
         action = items[i]
-        c = CombatCommand(action)
+        c = Skill(action)
         b = Button(action, c)
         actions.append(b)
     menu.setMenuItems(actions)
@@ -143,14 +145,18 @@ while(True):
 
     elif(user == 'z'):
         cmdHold = currMenu.select().execute(user=top, battlemap=battlefield)
-        if(cmdHold is not None and 'end' not in cmdHold.cmdName):
+        if(cmdHold is not None):
             target = raw_input("Target Location\n")
             if('x' in target):
                 break
             else:
                 target = ParseTarget(target)
                 if(target is not None):
-                    result = cmdHold.sendTarget(target)
+                    result = cmdHold.activate(target)
+                    if(result is 0):
+                        print 'Success'
+                    else:
+                        print 'Failure'
 
     elif(user == 'x'):
         newMenu = currMenu.back().execute()

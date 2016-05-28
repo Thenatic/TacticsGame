@@ -6,6 +6,7 @@ Allows for the creation of many different Command sub-classes.
 import math
 import copy
 
+
 class Command:
     def execute(self):
         raise UnsupportedActionException
@@ -20,7 +21,7 @@ class Command:
         raise UnsupportedActionException
 
 
-class NullCommand:
+class NullCommand(Command):
     def __init__(self):
         self.name = 'None'
 

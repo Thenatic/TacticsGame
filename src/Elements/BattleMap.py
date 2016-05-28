@@ -66,6 +66,11 @@ class BattleMap:
         newRow = newLocation[1]
         self.objects[newCol][newRow] = onTile
 
+    def getObject(self, locationTile):
+        row = locationTile.location[0]
+        col = locationTile.location[1]
+        return self.objects[row][col]
+
     def isOccupied(self, locationTile):
         row = locationTile.location[0]
         col = locationTile.location[1]

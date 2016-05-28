@@ -124,9 +124,10 @@ class BattleCharacter(Character):
         self.currSp = copy.copy(self.sp)
         self.initiative = copy.copy(self.rt)
         self.location = (0, 0)
-        self.actions = ['Move', 'Melee', 'End']
+        self.actions = ['Move', 'Rend', 'End']
         self.canMove = True
         self.canAct = True
+        self.ally = True
 
     def setLocation(self, location):
         self.location = location
@@ -147,6 +148,9 @@ class BattleCharacter(Character):
 
     def gainInitiative(self):
         self.initiative += 1
+
+    def setAlly(self, allyStatus):
+        self.ally = allyStatus
 
 
 class Spirit(Unit):
