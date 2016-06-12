@@ -36,3 +36,7 @@ class Roster:
         self.sort()
 
 
+    def set(self, battlemap):
+        units = battlemap.condensedObjects()
+        for unit in units:
+            self.append([unit, unit.initiative])

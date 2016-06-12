@@ -16,40 +16,24 @@ from src.Elements.Button import*
 from src.Elements.SkillList import*
 from src.Elements.Roster import*
 from src.Utility.save_load import*
-from src.Utility.map_parse import map_parse
+from src.Utility.file_parser import *
 
 
 # Initialize Units #####################################
 game = newFile()
-bads = tempFile()   #Replace later with encounter-specific stuff
 roster = Roster()
 
-filename = 'Fields'
-map_file = open(os.path.join(os.getcwd() + '/data/Maps', filename), 'r')
-battlefield = map_parse(map_file)
+# Create and populate the battlefield
+map_filename = 'Fields'
+enc_filename = 'Fields_01'
+map_file = open(os.path.join(os.getcwd() + '/data/Maps', map_filename), 'r')
+enc_file = open(os.path.join(os.getcwd() + '/data/Encounters', enc_filename), 'r')
+battlemap = map_parse(map_file)
+encounter_parse(enc_file, game, battlemap)
 
-# Pull friendly units from save
-for i in range(0, len(game.characters)):
-    unit = game.characters[i]
-    unit = BattleCharacter(unit)
-    unit.setLocation((i, 0))
-    unit.setAlly(True)
-    battlefield.addObject(unit, unit.location)
-    rosterUnit = [unit, unit.initiative]
-    roster.append(rosterUnit)
-
-
-# Pull unfriendly units from encounter
-for i in range(0, len(bads.characters)):
-    unit = bads.characters[i]
-    unit = BattleCharacter(unit)
-    unit.setLocation((i, 4))
-    unit.setAlly(False)
-    battlefield.addObject(unit, unit.location)
-    rosterUnit = [unit, unit.initiative]
-    roster.append(rosterUnit)
 
 # Sort roster by turn order
+roster.set(battlemap)
 roster.sort()
 
 # Build empty menus
@@ -89,16 +73,11 @@ def ParseTarget(string):
     print string
     row = int(string[0])
     col = int(string[2])
-    if(row <= battlefield.dimension[0] and col <= battlefield.dimension[1]):
-        return battlefield.terrain[row][col]
+    if(row <= battlemap.dimension[0] and col <= battlemap.dimension[1]):
+        return battlemap.terrain[row][col]
     else:
+        print 'Not in map dimensions.'
         return None
-
-#
-#
-# top = roster.peek()
-# ButtonMenuBuilder(top.actions, actionMenu)
-
 
 
 # Main Loop ##############################################
@@ -122,8 +101,8 @@ while(True):
 
     # Print battlefield data.
     print '\n'
-    print battlefield.data()
-    print battlefield.onTileData()
+    print battlemap.data()
+    print battlemap.onTileData()
     print '\n'
     print roster
     print '\n'
@@ -144,7 +123,7 @@ while(True):
         currMenu.down()
 
     elif(user == 'z'):
-        cmdHold = currMenu.select().execute(user=top, battlemap=battlefield)
+        cmdHold = currMenu.select().execute(user=top, battlemap=battlemap)
         if(cmdHold is not None):
             target = raw_input("Target Location\n")
             if('x' in target):

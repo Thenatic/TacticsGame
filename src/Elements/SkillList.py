@@ -68,31 +68,33 @@ class Skill(Command):
 
     def isProperTargetType(self, target, targetType):
         space = self.battlemap.getObject(target)
+        print space
+        print 'empty'
 
-        if(targetType is 'OneEmpty'):
-            if(space is 'empty'):
+        if('OneEmpty' in targetType):
+            if('empty' in space):
                 return True
             else:
                 return False
 
-        if(targetType is 'OneSelf'):
-            # Build a way for map to check friendly/enemy status
-            if(space is not 'empty'):
-                return True
-            else:
-                return False
-
-        if(targetType is 'OneEnemy'):
-            if(space is not 'empty' and space.ally is False):
-                return True
-            else:
-                return False
-
-        if (targetType is 'OneAlly'):
-            if (space is not 'empty' and space.ally is True):
-                return True
-            else:
-                return False
+        # if(targetType is 'OneSelf'):
+        #     # Build a way for map to check friendly/enemy status
+        #     if(space is not 'empty'):
+        #         return True
+        #     else:
+        #         return False
+        #
+        # if(targetType is 'OneEnemy'):
+        #     if(space is not 'empty' and space.ally is False):
+        #         return True
+        #     else:
+        #         return False
+        #
+        # if (targetType is 'OneAlly'):
+        #     if (space is not 'empty' and space.ally is True):
+        #         return True
+        #     else:
+        #         return False
 
 
 class Move(Skill):

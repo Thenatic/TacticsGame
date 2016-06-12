@@ -1,0 +1,29 @@
+#Encounter File: Fields_01
+#
+#
+#Map looks like this
+#g g g g g
+#g g g g g
+#g g h g g
+#g g h g g
+#g g g g g
+#
+#Encounter looks like this
+#1 2 3 X X
+#X X X X X
+#X X X X X
+#X x X X X
+#a b X X X
+#
+#
+{
+"objects":[{"0":"good", "1":"good", "2":"good", "3":"empty", "4":"empty"},
+           {"0":"empty", "1":"empty", "2":"empty", "3":"empty", "4":"empty"},
+           {"0":"empty", "1":"empty", "2":"empty", "3":"empty", "4":"empty"},
+           {"0":"empty", "1":"empty", "2":"empty", "3":"empty", "4":"empty"},
+           {"0":"bad_0", "1":"bad_1", "2":"empty", "3":"empty", "4":"empty"}],
+"map":"Fields",
+"victory_condition":"Annihilation",
+"bad_0":{"name":"Joe", "job":"Thug", "level":"3"},
+"bad_1":{"name":"Jim", "job":"Thug", "level":"2"}
+}

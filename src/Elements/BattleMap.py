@@ -9,9 +9,9 @@ class BattleMap:
     def __init__(self):
         self.terrain = [[]]
         self.objects = [[]]
-        self.cursor = [0, 0]        # [column, row]  # [x, y]
         self.dimension = [0, 0]
         self.name = 'map'
+        self.victory_condition = ''
 
     def __str__(self):
         return self.name
@@ -28,28 +28,59 @@ class BattleMap:
             string = string + '\n' + str(self.objects[i]).strip('[]')
         return string
 
-    def addTile(self, c):
+    def makeTile(self, c, location):
         if(c in 'g'):
-            tile = GrassTile(self.cursor)
+            tile = GrassTile(location)
         elif(c in 'h'):
-            tile = HillTile(self.cursor)
+            tile = HillTile(location)
         elif (c in 'w'):
-            tile = WaterTile(self.cursor)
+            tile = WaterTile(location)
         else:
             raise BadMapFormatException
-        self.terrain[self.cursor[1]].insert(self.cursor[0], tile)
-        self.objects[self.cursor[1]].insert(self.cursor[0], 'empty')
-        self.cursor[0] += 1
-        self.dimension = copy.copy(self.cursor)
+
+        return tile
 
     def addObject(self, onTile, location):
         col = copy.copy(location[0])
         row = copy.copy(location[1])
         self.objects[row][col] = onTile
 
-    def nextRow(self):
-        self.cursor[1] += 1     # Jump down a row
-        self.cursor[0] = 0      # Set column back to 0
+
+    def replaceObjects(self, originals, replacements):
+        """
+        Goes through the map's objects and replaces objects in originals with the corresponding object in replacements.
+        :param originals:
+        :param replacements:
+        :return:
+        """
+        # "item" is (row, col, character)
+        map_object_generator = nested_list_traversal(self.objects)
+        while True:
+            try:
+                item = map_object_generator.next()
+                if str(item[2]) in originals:
+                    index = originals.index(item[2])
+                    replacement = replacements.pop(index)
+                    originals.remove(item[2])
+                    self.objects[item[0]][item[1]] = replacement
+                    replacement.setLocation( (item[0], item[1]) )
+            except StopIteration:
+                return 0
+            except:
+                raise
+
+    def condensedObjects(self):
+        map_object_generator = nested_list_traversal(self.objects)
+        condensed_objects_list = []
+        while True:
+            try:
+                item = map_object_generator.next()
+                if 'empty' not in item:
+                    condensed_objects_list.append(item[2])
+            except StopIteration:
+                return condensed_objects_list
+            except:
+                raise
 
     def setMap(self, nestedList):
         self.terrain = nestedList
@@ -78,6 +109,10 @@ class BattleMap:
             return False
         else:
             return True
+
+    def setVictory(self, boolean):
+        self.victory_condition = boolean
+
 
 class Tile:
     def __init__(self, location):
@@ -132,3 +167,12 @@ class SolidTile(Tile):
 class BadMapFormatException(Exception):
     def __str__(self):
         return 'BadMapFormatException'
+
+
+def nested_list_traversal(list):
+    try:
+        for i in range(0, len(list)):
+            for j in range(0, len(list[i])):
+                yield (i, j, list[i][j])
+    except TypeError:
+        yield list

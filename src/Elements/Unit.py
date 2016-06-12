@@ -15,7 +15,7 @@ import math
 AP = [[5,5,7,7], [6,6,8,8]]
 MT = [[8,5,5,8], [9,6,6,9]]
 NM = [[5,7,7,5], [6,8,8,6]]
-TG = [[5,5,5,5], [6,6,6,6]]
+TG = [[5,5,5,5], [5,5,5,5], [6,6,6,6]]
 
 LF = [[0,1,0,1], [0,2,0,1]]
 GA = [[1,0,0,1], [1,0,0,2]]
@@ -50,7 +50,7 @@ class Character(Unit):
 
         #Basic Info
         self.name = charName
-        self.level = charLevel
+        self.level = charLevel-1
         self.jobName = charClass
         self.job = Classes[charClass]
         self.spirit = 'None'
