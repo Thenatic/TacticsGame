@@ -1,0 +1,23 @@
+# The Skill file for a fantasy rpg.
+#
+#
+{
+"Rend":{
+    "name":"Rend",
+    "cost":"10FP",
+    "target":"OneEnemy",
+    "area":"Single",
+    "range":"1",
+    "effect":"target hp down(user kine * 3 - target df)"
+},
+
+"Magic Missile":{
+    "name":"Magic Missile",
+    "cost":"10FP",
+    "target":"OneEnemy",
+    "area":"Single",
+    "range":"5",
+    "effect":"target hp down(user animus * 2 - target df)"
+}
+
+}

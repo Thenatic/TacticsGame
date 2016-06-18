@@ -13,26 +13,35 @@ os.chdir('/home/roy/PycharmProjects/TacticsGame/')
 
 from src.Elements.Menu import*
 from src.Elements.Button import*
-from src.Elements.SkillList import*
 from src.Elements.Roster import*
 from src.Utility.save_load import*
 from src.Utility.file_parser import *
 
 
 # Initialize Units #####################################
-game = newFile()
-roster = Roster()
 
 # Create and populate the battlefield
+job_filename = "Jobs_Fantasy"
+skills_filename = "Skills_Fantasy"
 map_filename = 'Fields'
 enc_filename = 'Fields_01'
+job_file = open(os.path.join(os.getcwd() + '/data/Jobs', job_filename), 'r')
+skill_file = open(os.path.join(os.getcwd() + '/data/Skills', skills_filename), 'r')
 map_file = open(os.path.join(os.getcwd() + '/data/Maps', map_filename), 'r')
 enc_file = open(os.path.join(os.getcwd() + '/data/Encounters', enc_filename), 'r')
+jobs = jobs_parse(job_file)
+skills = skills_parse(skill_file)
 battlemap = map_parse(map_file)
-encounter_parse(enc_file, game, battlemap)
+
+unit_factory = UnitFactory(skills, jobs)
+game = newFile(unit_factory)
+encounter_parse(enc_file, game, battlemap, unit_factory)
+
+
 
 
 # Sort roster by turn order
+roster = Roster()
 roster.set(battlemap)
 roster.sort()
 
@@ -55,8 +64,7 @@ def ButtonMenuBuilder(items, menu, cmdType=''):
     actions = []
     for i in range(0, len(items)):
         action = items[i]
-        c = Skill(action)
-        b = Button(action, c)
+        b = Button(str(action), action)
         actions.append(b)
     menu.setMenuItems(actions)
 
@@ -74,7 +82,8 @@ def ParseTarget(string):
     row = int(string[0])
     col = int(string[2])
     if(row <= battlemap.dimension[0] and col <= battlemap.dimension[1]):
-        return battlemap.terrain[row][col]
+        return (row, col)
+        #return battlemap.terrain[row][col]
     else:
         print 'Not in map dimensions.'
         return None
@@ -131,7 +140,7 @@ while(True):
             else:
                 target = ParseTarget(target)
                 if(target is not None):
-                    result = cmdHold.activate(target)
+                    result = cmdHold.activate(target, battlemap)
                     if(result is 0):
                         print 'Success'
                     else:

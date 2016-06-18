@@ -7,27 +7,14 @@ Allows for many different unit sub-classes, including Character and Spirit.
 import copy
 import math
 
-#Job Data
-#
-#JobName = [ [lvl1 kine, lvl1 grace, lvl1 animus, lvl1 health],
-#            [lvl2 kine, lvl2 grace, lvl2 animus, lvl2 health] ]
-
-AP = [[5,5,7,7], [6,6,8,8]]
-MT = [[8,5,5,8], [9,6,6,9]]
-NM = [[5,7,7,5], [6,8,8,6]]
-TG = [[5,5,5,5], [5,5,5,5], [6,6,6,6]]
+from src.Elements.Skill import*
 
 LF = [[0,1,0,1], [0,2,0,1]]
 GA = [[1,0,0,1], [1,0,0,2]]
 SW = [[1,1,0,0], [2,1,0,0]]
 
-Classes = {'Apostate':AP, 'Monster':MT, 'Necromancer':NM, 'Thug':TG}
+
 Titles = {'Lord of the Fishes':LF, 'Guardian of Ayn':GA, 'Swordsman of the West': SW}
-
-
-
-#Job Array
-jobArray = [AP, MT, NM, TG]
 
 
 class Unit:
@@ -38,12 +25,37 @@ class Unit:
         return self.__str__()
 
 
+class UnitFactory:
+    def __init__(self, skillsDict, jobDict):
+        self.skillsDict = skillsDict
+        self.jobsDict = jobDict
+
+    def createCharacter(self, name, job, level):
+        jobData = self.jobsDict[job]
+        skills = jobData['skills']
+        jobSkills = []
+
+        # Fill in other actions
+        for skill in skills:
+            skillDict = self.skillsDict[skill]
+            skillObject = Skill(skillDict)
+            jobSkills.append(skillObject)
+        newCharacter = Character(name, job, level, jobData, jobSkills)
+
+        return newCharacter
+
+    def createSpirit(self, name, title, level):
+        pass
+
+    def createObstacle(self):
+        pass
+
 class Character(Unit):
     '''
     The Character object contains data on a specific unit.
     '''
 
-    def __init__(self, charName, charClass, charLevel):
+    def __init__(self, charName, charClass, charLevel, jobData, jobSkills):
         '''
         Constructor
         '''
@@ -52,17 +64,16 @@ class Character(Unit):
         self.name = charName
         self.level = charLevel-1
         self.jobName = charClass
-        self.job = Classes[charClass]
+        self.jobData = jobData
+        self.skills = jobSkills
         self.spirit = 'None'
         self.spiritName = 'None'
 
-
-
         #Base Primary Stats
-        self.kine = self.job[self.level][0]
-        self.grace = self.job[self.level][1]
-        self.animus = self.job[self.level][2]
-        self.health = self.job[self.level][3]
+        self.kine = self.jobData['baseStats'][0] + (self.level * self.jobData['growth'][0])
+        self.grace = self.jobData['baseStats'][1] + (self.level * self.jobData['growth'][1])
+        self.animus = self.jobData['baseStats'][2] + (self.level * self.jobData['growth'][2])
+        self.health = self.jobData['baseStats'][3] + (self.level * self.jobData['growth'][3])
 
         #Base Secondary Stats
         self.hp = ((self.health*2) + self.kine)
@@ -73,10 +84,9 @@ class Character(Unit):
             self.sp = (self.health + self.grace)
 
         self.rt = math.ceil((self.grace + self.animus)/2)
-
         self.dr = math.ceil((self.kine + self.health)/2)
-
         self.mv = 5
+
 
     def __str__(self):
         return str(self.name)
@@ -106,7 +116,7 @@ class Character(Unit):
 
     def setSpirit(self, spirit=None):
         '''
-        Links a spirit unit with this unit
+        Links a spirit unit with this character
         '''
         if spirit is None:
             self.spirit = 'None'
@@ -119,15 +129,21 @@ class Character(Unit):
 
 class BattleCharacter(Character):
     def __init__(self, character):
-        Character.__init__(self, character.name, character.jobName, character.level)
+        Character.__init__(self, character.name, character.jobName, character.level, character.jobData, character.skills)
         self.currHp = copy.copy(self.hp)
         self.currSp = copy.copy(self.sp)
         self.initiative = copy.copy(self.rt)
         self.location = (0, 0)
-        self.actions = ['Move', 'Rend', 'End']
         self.canMove = True
         self.canAct = True
         self.ally = True
+
+        moveSkill = Move()
+        endTurnSkill = EndTurn()
+
+        self.actions = copy.deepcopy(self.skills)
+        self.actions.insert(0, moveSkill)
+        self.actions.append(endTurnSkill)
 
     def setLocation(self, location):
         self.location = location
@@ -168,8 +184,6 @@ class Spirit(Unit):
         self.level = charLevel
         self.jobName = charClass
         self.job = Titles[charClass]
-
-
 
         #Primary Stats
         self.kine = self.job[self.level][0]

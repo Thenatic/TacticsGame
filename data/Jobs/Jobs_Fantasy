@@ -1,0 +1,23 @@
+# The job file for a fantasy rpg
+#
+#
+{
+"Thug":{
+    "name":"Thug",
+    "description":"A brute whose main contribution to society is violence.",
+    "baseStats":[5, 5, 5, 5],
+    "growth": [1, 1, 1, 1],
+    "mv": 5,
+    "skills": ["Rend"]
+    },
+
+"Mage":{
+    "name":"Mage",
+    "description":"Someone well-versed in the secrets of the universe, and in blowing things up.",
+    "baseStats":[5, 5, 5, 5],
+    "growth": [1, 1, 1, 1],
+    "mv": 5,
+    "skills": ["Magic Missile"]
+    }
+
+}

@@ -28,7 +28,7 @@ def map_parse(input_file):
         row = objects_List_of_Dicts[i][str(i)]
         terrainRow = []
         for j in range(0, len(row)):
-            tile = battlemap.makeTile(row[j], (j, i) )
+            tile = battlemap.makeTile(row[j])
             terrainRow.append(tile)
             battlemap.dimension = (j, i)    # Unnecessary overhead
         terrain.append(terrainRow)
@@ -37,7 +37,7 @@ def map_parse(input_file):
     return battlemap
 
 
-def encounter_parse(input_file, game, battlemap):
+def encounter_parse(input_file, game, battlemap, unit_factory):
     """
     Parses an encounter file into an encounter objects.
     :param input_file: A text file containing an encounter JSON.
@@ -73,7 +73,7 @@ def encounter_parse(input_file, game, battlemap):
             # Convert json to unit object
             enemy_id = 'bad_' + str(i)
             enemy = encDict[enemy_id]
-            enemy = unit_parse(enemy)
+            enemy = unit_parse(enemy, unit_factory)
 
             # Convert unit object to battlecharacter object
             enemy = BattleCharacter(enemy)
@@ -106,7 +106,27 @@ def encounter_parse(input_file, game, battlemap):
     return 0
 
 
-def unit_parse(unit_dict):
+def jobs_parse(input_file):
+    """
+    Runs a Jobs JSON file through the preprocessor and returns a python dictionary.
+    :param input_file: Jobs JSON file.
+    :return: jobs_dict
+    """
+    jobs_dict = file_to_dict(input_file)
+    return jobs_dict
+
+def skills_parse(input_file):
+    """
+    Runs a Skills JSON file through the preprocessor and returns a python dictionary.
+    :param input_file: Skills JSON file.
+    :return: skills_dict
+    """
+    skills_dict = file_to_dict(input_file)
+    return skills_dict
+
+
+# Auxiliary Functions#########################################
+def unit_parse(unit_dict, unit_factory):
     """
     Parses a dictionary representing a unit into a unit object.
     :param unit_dict: {name: "Joe", job: "Thug", level: 3}
@@ -116,7 +136,7 @@ def unit_parse(unit_dict):
     name = str(unit_dict['name'])
     job = str(unit_dict['job'])
     level = int(unit_dict['level'])
-    unit = Character(name, job, level)
+    unit = unit_factory.createCharacter(name, job, level)
     return unit
 
 

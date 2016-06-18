@@ -11,10 +11,10 @@ INTRO
 
 
 TO-DO
- * Get combat commands to work better
+ * Get combat commands to work better (skill parser)
  * Implement spirit binding
  * Add Terrain Impediments
  * Create the start menu
- * Maybe use a finite state machine?
+ * Set up the a finite state machine for the main game loop
  * Develop simple A.I. (find enemy/attack enemy)
  * Get save/load running

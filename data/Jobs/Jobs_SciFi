@@ -1,0 +1,11 @@
+#Job File: Thug
+#
+#
+{
+"name":"Thug",
+"description":"A brute whose main contribution to society is violence."
+"baseStats":[5, 5, 5, 5]
+"growth": [1, 1, 1, 1]
+"mv": 5
+"skills": ["rend"]
+}

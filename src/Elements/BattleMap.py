@@ -13,6 +13,10 @@ class BattleMap:
         self.name = 'map'
         self.victory_condition = ''
 
+        self.grassTile = None
+        self.hillTile = None
+        self.waterTile = None
+
     def __str__(self):
         return self.name
 
@@ -28,13 +32,24 @@ class BattleMap:
             string = string + '\n' + str(self.objects[i]).strip('[]')
         return string
 
-    def makeTile(self, c, location):
+    def makeTile(self, c):
+        """
+        Returns a reference to the appropriate tile. Uses the Flyweight pattern to reduce memory usage.
+        :param c: Specifies the type of tile to return.
+        :return: The appropriate tile, given c.
+        """
         if(c in 'g'):
-            tile = GrassTile(location)
+            if(self.grassTile is None):
+                self.grassTile = GrassTile()
+            tile = self.grassTile
         elif(c in 'h'):
-            tile = HillTile(location)
+            if (self.hillTile is None):
+                self.hillTile = HillTile()
+            tile = self.hillTile
         elif (c in 'w'):
-            tile = WaterTile(location)
+            if (self.waterTile is None):
+                self.waterTile = WaterTile()
+            tile = self.waterTile
         else:
             raise BadMapFormatException
 
@@ -97,9 +112,11 @@ class BattleMap:
         newRow = newLocation[1]
         self.objects[newCol][newRow] = onTile
 
-    def getObject(self, locationTile):
-        row = locationTile.location[0]
-        col = locationTile.location[1]
+    def getObject(self, location):
+        row = location[0]
+        col = location[1]
+        # row = locationTile.location[0]
+        # col = locationTile.location[1]
         return self.objects[row][col]
 
     def isOccupied(self, locationTile):
@@ -115,9 +132,12 @@ class BattleMap:
 
 
 class Tile:
-    def __init__(self, location):
-        self.location = copy.copy(location)
+    """
+    The Tile class. Uses the Flyweight design pattern to minimize memory usage.
 
+    At any given time, there exists only one of a particular tile type. All tiles of that type are just references to
+    the single tile. This means that all grass tiles on a map are simply references to a single GrassTile object.
+    """
     def __str__(self):
         return 'Tile'
 
@@ -125,8 +145,7 @@ class Tile:
         return self.__str__()
 
 class GrassTile(Tile):
-    def __init__(self, location):
-        Tile.__init__(self, location)
+    def __init__(self):
         self.cross = 'normal'
         self.slow = 0
         self.defense = 0
@@ -135,8 +154,7 @@ class GrassTile(Tile):
         return 'g'
 
 class HillTile(Tile):
-    def __init__(self, location):
-        Tile.__init__(self, location)
+    def __init__(self):
         self.cross = 'normal'
         self.slow = 1
         self.defense = 5
@@ -145,8 +163,7 @@ class HillTile(Tile):
         return 'h'
 
 class WaterTile(Tile):
-    def __init__(self, location):
-        Tile.__init__(self, location)
+    def __init__(self):
         self.cross = 'water'
         self.slow = 0
         self.defense = 0
@@ -155,8 +172,7 @@ class WaterTile(Tile):
         return 'w'
 
 class SolidTile(Tile):
-    def __init__(self, location):
-        Tile.__init__(self, location)
+    def __init__(self):
         self.cross = 'wall'
         self.slow = 0
         self.defense = 0
@@ -170,9 +186,14 @@ class BadMapFormatException(Exception):
 
 
 def nested_list_traversal(list):
+    """
+    A python generator for nested lists.
+    :param list: A nested list.
+    :return: The row, column, and element occupying that spot in the list. Progresses forward each call.
+    """
     try:
-        for i in range(0, len(list)):
-            for j in range(0, len(list[i])):
-                yield (i, j, list[i][j])
+        for row in range(0, len(list)):
+            for col in range(0, len(list[row])):
+                yield (row, col, list[row][col])
     except TypeError:
         yield list

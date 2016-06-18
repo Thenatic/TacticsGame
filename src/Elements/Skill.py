@@ -1,23 +1,30 @@
+"""
+The Skill class.
+A subclass of the Command class that specifically relates to combat actions.
+"""
 
 import copy
 from Command import*
 
-targetTypes = ['OneAny', 'OneUnit', 'OneAlly', 'OneEnemy', 'OneSelf', 'OneEmpty',
-               'Square', 'Line', 'Cross', 'Flower',
-               'End']
-
-skillDict= {}
-
 class Skill(Command):
-    def __init__(self, skillName):
-        self.skillName = skillName
-        self.targetType = None
-        self.user = None
-        self.battlemap = None
-        self.cmdRange = None
+    def __init__(self, skillDict):
+        self.name = skillDict['name']
+        self.cost = skillDict['cost']
+        self.target = skillDict['target']
+        self.range = skillDict['range']
+        self.area = skillDict['area']
+        self.effect = skillDict['effect']
+
+        # Parse effect and make that into the execute action
 
     def __str__(self):
-        return self.skillName
+        return self.name
+
+    def __repr__(self):
+        return self.__str__()
+
+    def parseEffect(self):
+        pass
 
     def execute(self, user=None, battlemap=None):
         """
@@ -28,16 +35,12 @@ class Skill(Command):
         :param battlemap: A BattleMap object that specifies the map.
         :return: Target type if the skill can be used, None if it can't.
         """
+        if(user.fp >= self.cost and user.canAct()):
+            return self.target
+        else:
+            return None
 
-        try:
-            skill = skillDict[self.skillName.lower()]()
-            return skill.execute(user=user, battlemap=battlemap)
-        except:
-            raise UnsupportedActionException
-
-        pass
-
-    def activate(self, target):
+    def activate(self, target, battlemap):
         """
         Executes the game logic behind a skill.
 
@@ -46,28 +49,27 @@ class Skill(Command):
         """
         pass
 
-    def withinDistance(self, target, cmdRange):
+    def withinDistance(self, userLocation, targetLocation, cmdRange):
         """
         Determines whether a target is within range for the given skill.
 
         :param target: A tile from the BattleMap that species the target location.
-        :param cmdRange: The number of tiles from the user that the command can be executed from.
         :return: True if target is within range, false otherwise.
         """
-        userX = self.user.location[0]
-        userY = self.user.location[1]
-        targetX = target.location[0]
-        targetY = target.location[1]
+        userX = userLocation[0]
+        userY = userLocation[1]
+        targetX = targetLocation[0]
+        targetY = targetLocation[1]
 
-        self.distance = abs(userX - targetX) + abs(userY - targetY)
+        distance = abs(userX - targetX) + abs(userY - targetY)
 
-        if(self.distance <= self.cmdRange):
+        if(distance <= cmdRange):
             return True
         else:
             return False
 
-    def isProperTargetType(self, target, targetType):
-        space = self.battlemap.getObject(target)
+    def isProperTargetType(self, target, targetType, battlemap):
+        space = battlemap.getObject(target)
         print space
         print 'empty'
 
@@ -99,8 +101,8 @@ class Skill(Command):
 
 class Move(Skill):
     def __init__(self):
-        Skill.__init__(self, 'move')
-        self.targetType = 'OneEmpty'
+        move = {'name': 'Move', 'cost': '10FP', 'target': 'OneEmpty', 'range': 'None', 'area': 'Single', 'effect': 'None'}
+        Skill.__init__(self, move)
 
     def getTargetType(self):
         return 'OneEmpty'
@@ -109,18 +111,23 @@ class Move(Skill):
         #Check if user can move
         if(user.canMove):
             self.user = user
-            self.battlemap = battlemap
             self.cmdRange = user.mv
             return self
         else:
             return None
 
-    def activate(self, targetTile):
-        if(self.withinDistance(targetTile, self.cmdRange) and self.isProperTargetType(targetTile, self.targetType)):
+    def activate(self, targetLocation, battlemap):
+        """
+
+        :param targetLocation: An xy coordinate pair (1,2).
+        :param battlemap:
+        :return:
+        """
+        if(self.withinDistance(self.user.location, targetLocation, self.cmdRange) and self.isProperTargetType(targetLocation, self.target, battlemap)):
             self.oldLocation = copy.copy(self.user.location)
-            self.user.location = copy.copy(targetTile.location)
+            self.user.location = copy.copy(targetLocation)
             self.user.moved()
-            self.battlemap.moveObject(self.user)
+            battlemap.moveObject(self.user)
             return 0
 
         else:
@@ -129,46 +136,19 @@ class Move(Skill):
 
 class EndTurn(Skill):
     def __init__(self):
-        Skill.__init__(self, 'end')
-        self.targetType = 'OneSelf'
+        end = {'name': 'End Turn', 'cost': '0FP', 'target': 'Self', 'range': 'None', 'area': 'Single',
+                'effect': 'None'}
+        Skill.__init__(self, end)
 
     def execute(self, user=None, battlemap=None):
         self.user = user
         return self
 
-    def activate(self, targetTile):
+    def activate(self, targetTile, battlemap):
         self.user.moved()
         self.user.acted()
         return 0
 
-
-class Rend(Skill):
-    def __init__(self):
-        Skill.__init__(self, 'rend')
-        self.targetType = 'OneEnemy'
-
-    def execute(self, user=None, battlemap=None):
-        if(user.canAct):
-            self.user = user
-            self.battlemap = battlemap
-            self.cmdRange = 1
-            return self
-        else:
-            return None
-
-    def activate(self, targetTile):
-        if (self.withinDistance(targetTile, self.cmdRange) and self.isProperTargetType(targetTile, self.targetType)):
-            target = self.battlemap.getObject(targetTile)
-            target.currHp = 1
-            self.user.acted()
-            return 0
-        else:
-            return None
-
-
 class UnsupportedActionException(Exception):
     def __str__(self):
         return 'UnsupportedActionException'
-
-
-skillDict = {'move': Move, 'end': EndTurn, 'rend': Rend}

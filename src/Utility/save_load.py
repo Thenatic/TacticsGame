@@ -23,18 +23,16 @@ def load_file():
 
 class newFile():
     
-    def __init__(self):
+    def __init__(self, unit_factory):
         self.characters = []
         self.spirits = []
 
-        #Add initial units
-        #placeholder = load_image('knot.png', -1)
-        friendly1 = Character('Steve', 'Apostate', 1)
-        friendly2 = Character('Anna', 'Necromancer', 1)
-        friendly3 = Character('Frank', 'Monster', 1)
+        friendly1 = unit_factory.createCharacter('Steve', 'Thug', 1)
+        friendly2 = unit_factory.createCharacter('Anna', 'Mage', 3)
+        friendly3 = unit_factory.createCharacter('Frank', 'Thug', 2)
         self.characters = [friendly1, friendly2, friendly3]
 
-        #Add initial spirits
+        # Add initial spirits
         Titles = {'Lord of the Fishes':LF, 'Guardian of Ayn':GA, 'Swordsman of the West': SW}
 
         spirit1 = Spirit('James', 'Lord of the Fishes', 1)
@@ -42,14 +40,6 @@ class newFile():
         spirit3 = Spirit('Nimrod', 'Swordsman of the West', 1)
         self.spirits = [spirit1, spirit2, spirit3]
 
-class tempFile():
-    def __init__(self):
-        self.characters = []
-
-        # Add initial units
-        bad1 = Character('Jim', 'Thug', 1)
-        bad2 = Character('Joe', 'Thug', 1)
-        self.characters = [bad1, bad2]
 
 
 # print os.getcwd()
