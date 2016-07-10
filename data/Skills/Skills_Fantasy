@@ -4,20 +4,20 @@
 {
 "Rend":{
     "name":"Rend",
-    "cost":"10FP",
+    "cost":"10",
     "target":"OneEnemy",
     "area":"Single",
     "range":"1",
-    "effect":"target hp down(user kine * 3 - target df)"
+    "effect":"target hp down (user.kine * 3 - target.dr)"
 },
 
 "Magic Missile":{
     "name":"Magic Missile",
-    "cost":"10FP",
+    "cost":"10",
     "target":"OneEnemy",
     "area":"Single",
     "range":"5",
-    "effect":"target hp down(user animus * 2 - target df)"
+    "effect":"target hp down (user.animus * 2 - target.dr)"
 }
 
 }

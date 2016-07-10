@@ -33,12 +33,12 @@ class newFile():
         self.characters = [friendly1, friendly2, friendly3]
 
         # Add initial spirits
-        Titles = {'Lord of the Fishes':LF, 'Guardian of Ayn':GA, 'Swordsman of the West': SW}
-
-        spirit1 = Spirit('James', 'Lord of the Fishes', 1)
-        spirit2 = Spirit('Fred', 'Guardian of Ayn', 1)
-        spirit3 = Spirit('Nimrod', 'Swordsman of the West', 1)
-        self.spirits = [spirit1, spirit2, spirit3]
+        # Titles = {'Lord of the Fishes':LF, 'Guardian of Ayn':GA, 'Swordsman of the West': SW}
+        #
+        # spirit1 = Spirit('James', 'Lord of the Fishes', 1)
+        # spirit2 = Spirit('Fred', 'Guardian of Ayn', 1)
+        # spirit3 = Spirit('Nimrod', 'Swordsman of the West', 1)
+        # self.spirits = [spirit1, spirit2, spirit3]
 
 
 

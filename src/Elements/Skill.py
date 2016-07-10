@@ -9,11 +9,14 @@ from Command import*
 class Skill(Command):
     def __init__(self, skillDict):
         self.name = skillDict['name']
-        self.cost = skillDict['cost']
+        self.cost = int(skillDict['cost'])
         self.target = skillDict['target']
         self.range = skillDict['range']
         self.area = skillDict['area']
         self.effect = skillDict['effect']
+
+        self.user = None
+        self.effects = []
 
         # Parse effect and make that into the execute action
 
@@ -35,19 +38,28 @@ class Skill(Command):
         :param battlemap: A BattleMap object that specifies the map.
         :return: Target type if the skill can be used, None if it can't.
         """
-        if(user.fp >= self.cost and user.canAct()):
-            return self.target
+        self.user = user
+        if(user.fp >= self.cost and user.canAct):
+            effectList = self.effect.split(';')
+            for effect in effectList:
+                parsedEffect = Effect(user, effect)
+                self.effects.append(parsedEffect)
+            return self
         else:
             return None
 
-    def activate(self, target, battlemap):
+    def activate(self, targetLocation, battlemap):
         """
         Executes the game logic behind a skill.
 
-        :param target: A tile from the BattleMap that species the target location.
+        :param targetLocation: An xy coordinate from the BattleMap that species the target location.
         :return: 0 if the skill can be used on that target, None if it can't.
         """
-        pass
+        target = battlemap.getObject(targetLocation)
+        for effect in self.effects:
+            effect.activate(target, targetLocation, battlemap)
+        self.user.acted()
+        return 0
 
     def withinDistance(self, userLocation, targetLocation, cmdRange):
         """
@@ -69,7 +81,7 @@ class Skill(Command):
             return False
 
     def isProperTargetType(self, target, targetType, battlemap):
-        space = battlemap.getObject(target)
+        space = str(battlemap.getObject(target))
         print space
         print 'empty'
 
@@ -99,9 +111,10 @@ class Skill(Command):
         #         return False
 
 
+
 class Move(Skill):
     def __init__(self):
-        move = {'name': 'Move', 'cost': '10FP', 'target': 'OneEmpty', 'range': 'None', 'area': 'Single', 'effect': 'None'}
+        move = {'name': 'Move', 'cost': '10', 'target': 'OneEmpty', 'range': 'None', 'area': 'Single', 'effect': 'None'}
         Skill.__init__(self, move)
 
     def getTargetType(self):
@@ -136,7 +149,7 @@ class Move(Skill):
 
 class EndTurn(Skill):
     def __init__(self):
-        end = {'name': 'End Turn', 'cost': '0FP', 'target': 'Self', 'range': 'None', 'area': 'Single',
+        end = {'name': 'End Turn', 'cost': '0', 'target': 'Self', 'range': 'None', 'area': 'Single',
                 'effect': 'None'}
         Skill.__init__(self, end)
 
@@ -144,11 +157,102 @@ class EndTurn(Skill):
         self.user = user
         return self
 
-    def activate(self, targetTile, battlemap):
+    def activate(self, targetLocation, battlemap):
         self.user.moved()
         self.user.acted()
         return 0
 
+
+class Effect():
+    """
+    A class for translating the "effect" attribute of a skill to game logic.
+    """
+    def __init__(self, user, skillString):
+        attributes = ['hp', 'fp', 'kine', 'grace', 'animus', 'health', 'rt', 'dr', 'mv']
+        status = []
+
+        skillTokens = skillString.lower().split()
+        self.user = user
+        self.target = None
+        self.type = None
+
+        # Attribute command values
+        self.effectTarget = None
+        self.attribute = None
+        self.polarity = None
+        self.expr = None
+
+        # Determine target [user/not user]
+        if 'user' in skillTokens[0]:
+            self.effectTarget = 'user'
+        elif 'target' in skillTokens[0]:
+            self.effectTarget = 'target'
+        else:
+            raise BadEffectFormattingException
+
+        # Determine effect type [attribute/status/movement]
+
+        # Attribute
+        if skillTokens[1] in attributes:
+            self.type = 'attribute'
+            self.attribute = skillTokens[1]
+            if 'up' in skillTokens[2]:
+                self.polarity = '+'
+            elif 'down' in skillTokens[2]:
+                self.polarity = '-'
+            else:
+                raise BadEffectFormattingException
+
+            self.expr = ''.join(skillTokens[3:])
+
+
+        # Status Effect
+
+        # Movement
+
+    def execute(self, user=None, battlemap=None):
+        self.user = user
+
+    def activate(self, target, targetLocation, battlemap):
+        self.target = target
+
+        if 'attribute' in self.type:
+            stat = 'target.' + self.attribute
+            effect = stat + self.polarity + self.expr
+            self.evalEffectExpr(stat, effect)
+
+            # target.stat = target.stat - expr
+
+    def evalEffectExpr(self, stat, effect):
+
+        # Create a list of all possible stats (i.e. user.hp, target.mv)
+        # and map them to values (i.e. {user.hp, 50})
+        attributes = ['hp', 'fp', 'kine', 'grace', 'animus', 'health', 'rt', 'dr', 'mv']
+        statDict = {}
+
+        for attribute in attributes:
+            statDict['user.'+attribute] = str(getattr(self.user, attribute))
+            statDict['target.'+attribute] = str(getattr(self.target, attribute))
+
+        # Replace keywords in the expression with their values
+        for stat in statDict.keys():
+            effect = effect.replace(stat, statDict[stat])
+
+        # Evaluate expression to get the value
+        value = eval(effect)
+
+        # Apply the relevant effect to the relevant stat
+        setattr(self.target, self.attribute, value)
+        return 0
+
+
+
+
+
 class UnsupportedActionException(Exception):
     def __str__(self):
         return 'UnsupportedActionException'
+
+class BadEffectFormattingException(Exception):
+    def __str__(self):
+        return 'BadEffectFormattingException'

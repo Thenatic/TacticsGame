@@ -102,26 +102,29 @@ class BattleMap:
         self.objects = copy.deepcopy(nestedList)
 
     def moveObject(self, onTile):
+
+        # Remove unit from object grid
         for i in range(0, self.dimension[1]):
             for j in range(0, self.dimension[0]):
                 if(onTile == self.objects[i][j]):
                     self.objects[i][j] = 'empty'
 
+        # Place unit in new location on object grid
         newLocation = onTile.location
         newCol = newLocation[0]
         newRow = newLocation[1]
-        self.objects[newCol][newRow] = onTile
+        self.objects[newRow][newCol] = onTile       #Remember, object array is (y, x)
 
     def getObject(self, location):
-        row = location[0]
-        col = location[1]
+        col = location[0]
+        row = location[1]
         # row = locationTile.location[0]
         # col = locationTile.location[1]
         return self.objects[row][col]
 
     def isOccupied(self, locationTile):
-        row = locationTile.location[0]
-        col = locationTile.location[1]
+        col = locationTile.location[0]
+        row = locationTile.location[1]
         if('empty' == self.objects[row][col]):
             return False
         else:
