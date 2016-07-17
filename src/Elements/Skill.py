@@ -18,8 +18,6 @@ class Skill(Command):
         self.user = None
         self.effects = []
 
-        # Parse effect and make that into the execute action
-
     def __str__(self):
         return self.name
 
@@ -166,6 +164,7 @@ class EndTurn(Skill):
 class Effect():
     """
     A class for translating the "effect" attribute of a skill to game logic.
+    Parses a string into various game effects.
     """
     def __init__(self, user, skillString):
         attributes = ['hp', 'fp', 'kine', 'grace', 'animus', 'health', 'rt', 'dr', 'mv']
@@ -246,12 +245,10 @@ class Effect():
         return 0
 
 
-
-
-
 class UnsupportedActionException(Exception):
     def __str__(self):
         return 'UnsupportedActionException'
+
 
 class BadEffectFormattingException(Exception):
     def __str__(self):

@@ -26,11 +26,27 @@ class Unit:
 
 
 class UnitFactory:
+    """
+    An object that stores available skills and jobs for the game. Used to create character objects.
+    Applies the Singleton and Factory design patterns.
+    """
     def __init__(self, skillsDict, jobDict):
+        """
+        Cosntructor.
+        :param skillsDict: A Python dictionary containing all possible skills for this game.
+        :param jobDict: A Python dictionary containing all possible classes for this game.
+        """
         self.skillsDict = skillsDict
         self.jobsDict = jobDict
 
     def createCharacter(self, name, job, level):
+        """
+        Generates a character object.
+        :param name: Character name.
+        :param job: Character class.
+        :param level: Character level.
+        :return: newCharacter [Character]
+        """
         jobData = self.jobsDict[job]
         skills = jobData['skills']
         jobSkills = []
@@ -56,10 +72,9 @@ class Character(Unit):
     '''
 
     def __init__(self, charName, charClass, charLevel, jobData, jobSkills):
-        '''
+        """
         Constructor
-        '''
-
+        """
         #Basic Info
         self.name = charName
         self.level = charLevel-1
@@ -76,22 +91,29 @@ class Character(Unit):
         self.health = self.jobData['baseStats'][3] + (self.level * self.jobData['growth'][3])
 
         #Base Secondary Stats
-        self.hp = ((self.health*2) + self.kine)
+        self.maxHp = ((self.health * 2) + self.kine)
 
         if (self.animus >= self.grace):
-            self.fp = (self.health + self.animus)
+            self.maxFp = (self.health + self.animus)
         else:
-            self.fp = (self.health + self.grace)
+            self.maxFp = (self.health + self.grace)
 
         self.rt = math.ceil((self.grace + self.animus)/2)
         self.dr = math.ceil((self.kine + self.health)/2)
         self.mv = 5
 
-
     def __str__(self):
+        """
+        Returns unit's name.
+        :return: Name [String]
+        """
         return str(self.name)
 
     def data(self):
+        """
+        Returns a string containing the unit's stats.
+        :return: Data [String]
+        """
         string = (self.name + '\t' + self.jobName + "\n" +
                   '\n' +
                   'Level: ' + '\t' + str(self.level) + '\n' +
@@ -100,8 +122,8 @@ class Character(Unit):
                   'Animus: ' + '\t' + str(self.animus) + '\n' +
                   'Health: ' + '\t' + str(self.health) + '\n' +
                   '\n'
-                  'Hit Points: ' + '\t' + str(self.hp) + '\n' +
-                  'Stamina Points: ' + '\t' + str(self.fp) + '\n' +
+                  'Hit Points: ' + '\t' + str(self.maxHp) + '\n' +
+                  'Stamina Points: ' + '\t' + str(self.maxFp) + '\n' +
                   'Damage Reduction: ' + '\t' + str(self.dr) + '\n' +
                   'Reaction Time: ' + '\t' + str(self.rt) + '\n' +
                   'Movement Speed: ' + '\t' + str(self.mv) + '\n' +
@@ -128,10 +150,14 @@ class Character(Unit):
 
 
 class BattleCharacter(Character):
+    '''
+    A temporary instance of the character that contains information for combat.
+    Keeps track of things like current hp and location.
+    '''
     def __init__(self, character):
         Character.__init__(self, character.name, character.jobName, character.level, character.jobData, character.skills)
-        self.currHp = copy.copy(self.hp)
-        self.currFp = copy.copy(self.fp)
+        self.hp = copy.copy(self.maxHp)
+        self.fp = copy.copy(self.maxFp)
         self.initiative = copy.copy(self.rt)
         self.location = (0, 0)
         self.canMove = True
@@ -146,10 +172,14 @@ class BattleCharacter(Character):
         self.actions.append(endTurnSkill)
 
     def data(self):
+        """
+        Returns a string containing the unit's battle stats.
+        :return: Data [String]
+        """
         string = (self.name + '\t' + self.jobName + "\n" +
                   '\n' +
-                  'Hit Points: ' + '\t' + str(self.currHp) + '\n' +
-                  'Stamina Points: ' + '\t' + str(self.currFp) + '\n' +
+                  'Hit Points: ' + '\t' + str(self.hp) + '\n' +
+                  'Stamina Points: ' + '\t' + str(self.fp) + '\n' +
                   'Movement Speed: ' + '\t' + str(self.mv) + '\n' +
                   'Location: ' + '\t' + str(self.location) + '\n' +
                   'Can Move: ' + '\t' + str(self.canMove) + '\n' +
@@ -164,26 +194,49 @@ class BattleCharacter(Character):
         return string
 
     def setLocation(self, location):
+        """
+        Sets a unit's location variable (does not set the location on a map).
+        :param location:
+        """
         self.location = location
 
     def resetTurn(self):
+        """
+        Resets a unit's turn, allowing them to move and act.
+        """
         self.canMove = True
         self.canAct = True
 
     def moved(self):
+        """
+        Disables a unit's ability to move.
+        """
         self.canMove = False
 
     def acted(self):
+        """
+        Disables a unit's ability to act.
+        """
         self.canAct = False
 
     def endTurn(self):
+        """
+        Ends a unit's turn, setting them at the bottom of the roster and resetting their turn for the next round.
+        """
         self.initiative = 0
         self.resetTurn()
 
     def gainInitiative(self):
+        """
+        Increments initiative.
+        """
         self.initiative += 1
 
     def setAlly(self, allyStatus):
+        """
+        Makes a unit controllable or not.
+        :param allyStatus:
+        """
         self.ally = allyStatus
 
 

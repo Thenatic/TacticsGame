@@ -4,15 +4,13 @@ Currently used for testing character and command classes.
 """
 
 
-import os, argparse
+import argparse
 
 from src.Elements.Menu import*
 from src.Elements.Button import*
 from src.Elements.Roster import*
 from src.Utility.save_load import*
 from src.Utility.file_parser import *
-
-
 
 
 def parse_args():
@@ -47,7 +45,7 @@ def ButtonMenuBuilder(items, menu, cmdType=''):
     menu.setMenuItems(actions)
 
 
-# A temporary way to translate user input into a tile object
+# A temporary way to translate user input to map locations
 def ParseTarget(string, battlemap):
     """
     Determines the target location of an action by parsing a string.
@@ -110,7 +108,7 @@ def Battle(job_filename=None, skills_filename=None, map_filename=None, enc_filen
     utilityMenu = ButtonMenu('Utility Menu')
     currMenu = actionMenu
 
-    # Main Game Loop [a temporary setup until GUI stuff is built]
+    # Main Game Loop [a temporary setup until GUI stuff is built and a main game loop is put together]
     while(True):
         top = roster.peek()[0]
 

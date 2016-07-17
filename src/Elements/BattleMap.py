@@ -6,10 +6,13 @@ Represents a battlefield as a data structure.
 import copy
 
 class BattleMap:
+    """
+    A BattleMap contains information about a battlefield. It tracks object locations and terrain information.
+    """
     def __init__(self):
-        self.terrain = [[]]
-        self.objects = [[]]
-        self.dimension = [0, 0]
+        self.terrain = [[]]             # The "ground" of the battlefield (grass, hills, water, etc.)
+        self.objects = [[]]             # The "objects" of the battlefield (units, obstacles, etc.)
+        self.dimension = [0, 0]         # The size of the battlefield grid.
         self.name = 'map'
         self.victory_condition = ''
 
@@ -21,12 +24,20 @@ class BattleMap:
         return self.name
 
     def data(self):
+        """
+        Returns a string that represents the terrain grid.
+        :return:
+        """
         string = ''
         for i in range(0, len(self.terrain)):
             string = string + '\n' + str(self.terrain[i]).strip('[]')
         return string
 
     def onTileData(self):
+        """
+        Returns a string that represents the objects grid.
+        :return:
+        """
         string = ''
         for i in range(0, len(self.objects)):
             string = string + '\n' + str(self.objects[i]).strip('[]')
@@ -59,7 +70,6 @@ class BattleMap:
         col = copy.copy(location[0])
         row = copy.copy(location[1])
         self.objects[row][col] = onTile
-
 
     def replaceObjects(self, originals, replacements):
         """
@@ -118,8 +128,6 @@ class BattleMap:
     def getObject(self, location):
         col = location[0]
         row = location[1]
-        # row = locationTile.location[0]
-        # col = locationTile.location[1]
         return self.objects[row][col]
 
     def isOccupied(self, locationTile):

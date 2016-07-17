@@ -13,7 +13,7 @@ def map_parse(input_file):
     """
     Parses a map file into a map object.
     :param input_file: A text file containing a map JSON.
-    :return: The map object.
+    :return: battlemap [Map]
     """
     # Make a BattleMap object
     battlemap = BattleMap()

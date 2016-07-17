@@ -1,20 +1,28 @@
 ####################
 Tactics Game
-v 0.01
+v 0.1
 ####################
 
 INTRO
- This little side project is a way for me to explore some of the techniques covered in my college classes.
+ This little side project is a way for me to explore some of the techniques covered in my college classes and at my
+ internship. It uses various design patterns from the Design Patterns book and the Game Programming Patterns book.
 
- The game itself has mechanics similar to Fire Emblem and Final Fantasy Tactics. It's intended to be turn-based
- and character-driven. Everything else is still up in the air.
+ The game itself has mechanics similar to Fire Emblem and Final Fantasy Tactics. It's a turn-based strategy RPG
+ where units fight on a tiled grid.
 
 
-TO-DO
- * Get combat commands to work better (skill parser)
- * Implement spirit binding
+TO-DO --> v 0.2
+ * Improve and expand the skill parser
  * Add Terrain Impediments
  * Create the start menu
  * Set up the a finite state machine for the main game loop
  * Develop simple A.I. (find enemy/attack enemy)
  * Get save/load running
+ * Victory and Defeat conditions
+
+
+TO-DONE
+ * Create a temporary interface to game objects in lieu of a GUI
+ * Build an assortment of game elements (map class, roster class, skill class, etc.)
+ * Use a data-driven model for game elements (JSON --> game objects)
+ * Build a debuggable prototype of the Battle environment
