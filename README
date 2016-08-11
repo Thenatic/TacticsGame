@@ -12,17 +12,20 @@ INTRO
 
 
 TO-DO --> v 0.2
- * Improve and expand the skill parser
  * Add Terrain Impediments
  * Create the start menu
  * Set up the a finite state machine for the main game loop
  * Develop simple A.I. (find enemy/attack enemy)
  * Get save/load running
- * Victory and Defeat conditions
 
+
+TO-DO --> Less Important
+ * Multiple Victory and Defeat conditions
+ * Improve, refine, and expand the skill parser
 
 TO-DONE
  * Create a temporary interface to game objects in lieu of a GUI
  * Build an assortment of game elements (map class, roster class, skill class, etc.)
  * Use a data-driven model for game elements (JSON --> game objects)
  * Build a debuggable prototype of the Battle environment
+ * Added Victory and Defeat conditions, so Battle can end

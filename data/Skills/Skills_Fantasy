@@ -18,6 +18,15 @@
     "area":"Single",
     "range":"5",
     "effect":"target hp down (user.animus * 2 - target.dr)"
+},
+
+"Boom":{
+    "name":"Boom",
+    "cost":"10",
+    "target":"OneEnemy",
+    "area":"Single",
+    "range":"5",
+    "effect":"target hp down (20)"
 }
 
 }

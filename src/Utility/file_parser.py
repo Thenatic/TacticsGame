@@ -53,6 +53,7 @@ def encounter_parse(input_file, game, battlemap, unit_factory):
     objects_List_of_Dicts = encDict['objects']
     objectsList = []
 
+
     for i in range(0, len(objects_List_of_Dicts)):
         objectsRow = []
         for j in range(0, len(objects_List_of_Dicts[i])):

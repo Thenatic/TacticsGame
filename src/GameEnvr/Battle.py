@@ -10,7 +10,7 @@ from src.Elements.Menu import*
 from src.Elements.Button import*
 from src.Elements.Roster import*
 from src.Utility.save_load import*
-from src.Utility.file_parser import *
+from src.Utility.file_parser import*
 
 
 def parse_args():
@@ -58,9 +58,8 @@ def ParseTarget(string, battlemap):
     print string
     col = int(string[0])
     row = int(string[2])
-    if(row <= battlemap.dimension[1] and col <= battlemap.dimension[0]):
+    if (row <= battlemap.dimension[1]) and (col <= battlemap.dimension[0]):
         return (col, row)
-        #return battlemap.terrain[row][col]
     else:
         print 'Not in map dimensions.'
         return None
@@ -76,11 +75,6 @@ def Battle(job_filename=None, skills_filename=None, map_filename=None, enc_filen
     :param enc_filename:
     :return:
     """
-
-    # job_filename = "Jobs_Fantasy"
-    # skills_filename = "Skills_Fantasy"
-    # map_filename = 'Fields'
-    # enc_filename = 'Fields_01'
 
     os.chdir('/home/roy/PycharmProjects/TacticsGame/')
 
@@ -109,7 +103,7 @@ def Battle(job_filename=None, skills_filename=None, map_filename=None, enc_filen
     currMenu = actionMenu
 
     # Main Game Loop [a temporary setup until GUI stuff is built and a main game loop is put together]
-    while(True):
+    while (not roster.victory) and (not roster.defeat):
         top = roster.peek()[0]
 
         # Check if unit turn is done, and rotate roster if so.
@@ -138,13 +132,15 @@ def Battle(job_filename=None, skills_filename=None, map_filename=None, enc_filen
 
         if(user == 'a'):
             currMenu.up()
+            print '###############################'
 
         elif(user == 's'):
             currMenu.down()
+            print '###############################'
 
         elif(user == 'z'):
             cmdHold = currMenu.select().execute(user=top, battlemap=battlemap)
-            if(cmdHold is not None):
+            if (cmdHold is not None) and ('End' not in cmdHold.name):
                 try:
                     targetLocation = raw_input("Target Location\n")
                     if('x' in targetLocation):
@@ -153,14 +149,24 @@ def Battle(job_filename=None, skills_filename=None, map_filename=None, enc_filen
                         targetLocation = ParseTarget(targetLocation, battlemap)
                         if(targetLocation is not None):
                             result = cmdHold.activate(targetLocation, battlemap)
-                            if(result is 0):
+                            if result is 0:
                                 print 'Success'
                             else:
                                 print 'Failure'
+                            print '###############################'
                 except Exception as e:
                     print 'Encountered Problem'
                     print str(e)
                     print ''
+            elif ('End' in cmdHold.name):
+                result = cmdHold.activate((0, 0), battlemap)
+                if result is 0:
+                    print 'Success'
+                else:
+                    print 'Failure'
+                print '###############################'
+            roster.update()
+            currMenu.setToTop()
 
         elif(user == 'x'):
             newMenu = currMenu.back().execute()

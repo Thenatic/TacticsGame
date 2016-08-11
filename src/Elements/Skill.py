@@ -240,8 +240,9 @@ class Effect():
         # Evaluate expression to get the value
         value = eval(effect)
 
-        # Apply the relevant effect to the relevant stat
+        # Apply the relevant effect to the relevant stat, then check for new status (i.e. KO)
         setattr(self.target, self.attribute, value)
+        self.target.statusCheck()
         return 0
 
 

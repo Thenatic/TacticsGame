@@ -8,7 +8,7 @@
     "baseStats":[5, 5, 5, 5],
     "growth": [1, 1, 1, 1],
     "mv": 5,
-    "skills": ["Rend"]
+    "skills": ["Rend", "Boom"]
     },
 
 "Mage":{
@@ -17,7 +17,7 @@
     "baseStats":[5, 5, 5, 5],
     "growth": [1, 1, 1, 1],
     "mv": 5,
-    "skills": ["Magic Missile"]
+    "skills": ["Magic Missile", "Boom"]
     }
 
 }

@@ -8,6 +8,9 @@ Functions similarly to a list. Takes in lists of size two [unit, initiative].
 class Roster:
     def __init__(self):
         self.turnOrder = []     # List of pairs, containing Unit and Initiative [Anna, 8]
+        self.bench = []         # List of units that are currently KO'ed or otherwise out of combat
+        self.victory = False
+        self.defeat = False
 
     def __str__(self):
         return str(self.turnOrder)
@@ -35,8 +38,39 @@ class Roster:
 
         self.sort()
 
-
     def set(self, battlemap):
         units = battlemap.condensedObjects()
         for unit in units:
             self.append([unit, unit.initiative])
+
+    def remove(self, unit):
+        self.turnOrder.remove(unit)
+        self.bench.append(unit)
+
+    def update(self):
+        for unit in self.turnOrder:
+            if 'KO' in unit[0].status:
+                self.remove(unit)
+
+        # Check for annihilation victory
+        victory = True
+        for unit in self.turnOrder:
+            if not unit[0].ally:
+                victory = False
+                break
+
+        if victory is True:
+            print 'VICTORY!!'
+            self.victory = True
+
+        # Check for defeat
+        defeat = True
+        for unit in self.turnOrder:
+            if unit[0].ally:
+                defeat = False
+                break
+
+        if defeat is True:
+            print 'DEFEAT!!'
+            self.defeat = True
+

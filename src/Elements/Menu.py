@@ -90,6 +90,9 @@ class ButtonMenu(Menu):
         cmd = selectButton.getCommand()
         return cmd
 
+    def setToTop(self):
+        self.cursorIndex = 0
+
 class UnitMenu(Menu):
     """
     The UnitMenu class.

@@ -163,6 +163,7 @@ class BattleCharacter(Character):
         self.canMove = True
         self.canAct = True
         self.ally = True
+        self.status = []
 
         moveSkill = Move()
         endTurnSkill = EndTurn()
@@ -184,6 +185,7 @@ class BattleCharacter(Character):
                   'Location: ' + '\t' + str(self.location) + '\n' +
                   'Can Move: ' + '\t' + str(self.canMove) + '\n' +
                   'Can Act: ' + '\t' + str(self.canAct) + '\n' +
+                  'Status: ' + '\t' + str(self.status) + '\n' +
                   '\n')
 
         if (self.spirit == 'None'):
@@ -239,6 +241,15 @@ class BattleCharacter(Character):
         """
         self.ally = allyStatus
 
+    def statusCheck(self):
+        """
+        Check for changes in status after an attacker
+        :return:
+        """
+        if self.hp <= 0:
+            self.status = ['KO']
+        elif self.hp > 0 and 'KO' in self.status:
+            pass
 
 # class Spirit(Unit):
 #     '''
